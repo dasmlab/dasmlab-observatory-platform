@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dpo
+  namespace: openshift-gitops
+  labels:
+    app.kubernetes.io/part-of: dpo
+    dasmlab.org/cluster: 2026-prod-1
+    dasmlab.org/platform: dop
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:lmcdasm/dasmlab-live-cicd.git
+    targetRevision: main
+    path: clusters/2026-prod-1/dpo/live
+    directory:
+      recurse: false
+      include: dpo-v*.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dpo-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true

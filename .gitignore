@@ -1,0 +1,12 @@
+# Binaries / local
+bin/
+dist/
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Secrets
+.env
+*.pem
+*credentials*

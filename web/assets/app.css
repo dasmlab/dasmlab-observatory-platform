@@ -1,0 +1,142 @@
+:root {
+  --bg0: #0c1210;
+  --bg1: #14201a;
+  --ink: #e8f0ea;
+  --muted: #9bb0a3;
+  --accent: #3ecf8e;
+  --warn: #e6b84d;
+  --bad: #e07070;
+  --card: rgba(255, 255, 255, 0.04);
+  --line: rgba(255, 255, 255, 0.08);
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Source Sans 3", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #1a3d2e 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, #243248 0%, transparent 50%),
+    linear-gradient(160deg, var(--bg0), var(--bg1));
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.35;
+}
+
+.shell { max-width: 1100px; margin: 0 auto; padding: 2rem 1.25rem 4rem; position: relative; }
+
+.brand {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  letter-spacing: -0.02em;
+  margin: 0;
+  animation: rise 0.7s ease both;
+}
+.tag {
+  color: var(--muted);
+  margin: 0.35rem 0 1.75rem;
+  max-width: 42rem;
+  animation: rise 0.7s ease 0.08s both;
+}
+
+.hero-score {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 1.5rem;
+  align-items: center;
+  margin-bottom: 2rem;
+  animation: rise 0.7s ease 0.12s both;
+}
+@media (max-width: 700px) {
+  .hero-score { grid-template-columns: 1fr; }
+}
+
+.ring {
+  width: 160px; height: 160px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: conic-gradient(var(--accent) calc(var(--p) * 1%), rgba(255,255,255,0.08) 0);
+  position: relative;
+}
+.ring::after {
+  content: "";
+  position: absolute; inset: 12px; border-radius: 50%;
+  background: var(--bg1);
+}
+.ring .val {
+  position: relative; z-index: 1;
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+}
+.ring .lbl {
+  position: relative; z-index: 1;
+  font-size: 0.75rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
+}
+
+.comps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+.comp {
+  background: var(--card);
+  border: 1px solid var(--line);
+  padding: 0.85rem 1rem;
+  border-radius: 4px;
+}
+.comp .k { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.comp .v { font-family: var(--font-display); font-size: 1.6rem; margin-top: 0.2rem; }
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  margin: 2rem 0 0.75rem;
+}
+
+.sources {
+  display: grid;
+  gap: 0.5rem;
+}
+.src {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 4px;
+}
+.pill {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+}
+.pill.ok { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+.pill.bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, transparent); }
+
+.actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.5rem; }
+button {
+  font-family: var(--font-body);
+  font-weight: 600;
+  border: 1px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--ink);
+  padding: 0.65rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button:hover { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+.meta { color: var(--muted); font-size: 0.85rem; margin-top: 2rem; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
