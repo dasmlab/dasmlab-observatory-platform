@@ -28,7 +28,7 @@ func NewEngine(st *store.Store, tenant string) *Engine {
 
 func (e *Engine) Recompute() error {
 	comps := map[string]float64{
-		"seo":        clamp(e.metricOr(70, "gsc_impressions", 0.02)),
+		"seo":        e.mapMetric(70, "gsc_impressions", func(v float64) float64 { return 20 + v*0.01 }),
 		"geo":        50, // placeholder until AI collectors
 		"authority":  e.mapMetric(60, "github_stars", func(v float64) float64 { return 45 + v*8 }),
 		"engagement": e.mapMetric(65, "engaged_sessions", func(v float64) float64 { return 40 + v*3 }),

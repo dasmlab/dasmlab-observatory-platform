@@ -7,8 +7,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"context"
+
 	"github.com/lmcdasm/dasmlab-observatory-platform/internal/api"
 	"github.com/lmcdasm/dasmlab-observatory-platform/internal/collectors"
+	"github.com/lmcdasm/dasmlab-observatory-platform/internal/content"
 	"github.com/lmcdasm/dasmlab-observatory-platform/internal/scheduler"
 	"github.com/lmcdasm/dasmlab-observatory-platform/internal/score"
 	"github.com/lmcdasm/dasmlab-observatory-platform/internal/store"
@@ -38,7 +41,13 @@ func main() {
 	}
 
 	engine := score.NewEngine(st, tenant)
+	spine := content.New(st, tenant)
 	sched := scheduler.New(reg, st, engine)
+	sched.SetAfter(func(ctx context.Context) {
+		if err := spine.RefreshFromSitemap(ctx); err != nil {
+			log.Printf("content spine: %v", err)
+		}
+	})
 	sched.Start()
 
 	// Seed a score on boot so the dashboard is never empty.
@@ -51,6 +60,7 @@ func main() {
 		Registry:  reg,
 		Engine:    engine,
 		Scheduler: sched,
+		Spine:     spine,
 		Tenant:    tenant,
 		Version:   version,
 		StaticDir: staticDir,

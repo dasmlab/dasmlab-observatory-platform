@@ -15,11 +15,14 @@ type Scheduler struct {
 	st     *store.Store
 	engine *score.Engine
 	every  time.Duration
+	after  func(ctx context.Context)
 }
 
 func New(reg *collector.Registry, st *store.Store, engine *score.Engine) *Scheduler {
 	return &Scheduler{reg: reg, st: st, engine: engine, every: time.Hour}
 }
+
+func (s *Scheduler) SetAfter(fn func(ctx context.Context)) { s.after = fn }
 
 func (s *Scheduler) Start() {
 	go func() {
@@ -75,5 +78,8 @@ func (s *Scheduler) RunOnce() {
 	}
 	if err := s.engine.Recompute(); err != nil {
 		log.Printf("score recompute: %v", err)
+	}
+	if s.after != nil {
+		s.after(ctx)
 	}
 }

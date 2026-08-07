@@ -60,6 +60,33 @@ CREATE TABLE IF NOT EXISTS collector_status (
   last_run TEXT,
   last_error TEXT
 );
+CREATE TABLE IF NOT EXISTS entities (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tenant TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  key TEXT NOT NULL,
+  UNIQUE(tenant, kind, key)
+);
+CREATE TABLE IF NOT EXISTS path_daily (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tenant TEXT NOT NULL,
+  path TEXT NOT NULL,
+  day TEXT NOT NULL,
+  page_views REAL DEFAULT 0,
+  engaged REAL DEFAULT 0,
+  impressions REAL DEFAULT 0,
+  clicks REAL DEFAULT 0,
+  bot_hits REAL DEFAULT 0,
+  UNIQUE(tenant, path, day)
+);
+CREATE TABLE IF NOT EXISTS baselines (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tenant TEXT NOT NULL,
+  label TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  payload TEXT NOT NULL,
+  UNIQUE(tenant, label)
+);
 `)
 	return err
 }

@@ -35,7 +35,31 @@ function metricGrid(title, obj) {
   ]);
 }
 
-function render(tab, score, sources, meta, eng) {
+function contentTable(paths) {
+  const rows = paths || [];
+  return el("div", {}, [
+    el("h2", { class: "section-title", text: "Content spine" }),
+    rows.length
+      ? el(
+          "div",
+          { class: "sources" },
+          rows.map((p) =>
+            el("div", { class: "src" }, [
+              el("div", {}, [
+                el("strong", { text: p.path }),
+                el("div", {
+                  class: "meta",
+                  text: `views ${p.page_views || 0} · gsc ${p.impressions || 0}/${p.clicks || 0} · bots ${p.bot_hits || 0}`,
+                }),
+              ]),
+            ])
+          )
+        )
+      : el("p", { class: "meta", text: "No path entities yet — need live sitemap + collect." }),
+  ]);
+}
+
+function render(tab, score, sources, meta, eng, content, baselines) {
   const root = document.getElementById("app");
   root.innerHTML = "";
   const value = score?.value ?? 0;
@@ -59,8 +83,10 @@ function render(tab, score, sources, meta, eng) {
     body = el("div", {}, [
       metricGrid("Bot / crawl", eng?.bots),
       metricGrid("Index / technical", eng?.index),
+      metricGrid("Search (GSC)", eng?.search),
       metricGrid("GitHub authority", eng?.authority),
       metricGrid("Engagement (Activity)", eng?.engagement),
+      contentTable(content?.paths),
       el("h2", { class: "section-title", text: "Collector health" }),
       el(
         "div",
@@ -101,6 +127,19 @@ function render(tab, score, sources, meta, eng) {
           )
         ),
       ]),
+      el("h2", { class: "section-title", text: "Baselines" }),
+      el(
+        "div",
+        { class: "sources" },
+        (baselines || []).length
+          ? baselines.map((b) =>
+              el("div", { class: "src" }, [
+                el("strong", { text: b.label }),
+                el("span", { class: "meta", text: b.created_at }),
+              ])
+            )
+          : [el("p", { class: "meta", text: "No baselines yet — freeze one after collect." })]
+      ),
       el("h2", { class: "section-title", text: "Collector health" }),
       el(
         "div",
@@ -122,7 +161,7 @@ function render(tab, score, sources, meta, eng) {
     el("h1", { class: "brand", text: "Digital Presence Observatory" }),
     el("p", {
       class: "tag",
-      text: "Engineering observability for digital presence — Observe. Measure. Improve. Pilot " + (meta?.tenant || "dasmlab.org") + ".",
+      text: "Mirror for dasmlab_home — observe hubs, crawl, search, and engagement. Pilot " + (meta?.tenant || "dasmlab.org") + ".",
     }),
     nav,
     body,
@@ -131,7 +170,20 @@ function render(tab, score, sources, meta, eng) {
         text: "Run collectors",
         onclick: async () => {
           await fetch("/api/v1/collect/run", { method: "POST" });
-          setTimeout(() => boot(tab), 1200);
+          setTimeout(() => boot(tab), 1500);
+        },
+      }),
+      el("button", {
+        text: "Freeze baseline",
+        onclick: async () => {
+          const label = prompt("Baseline label", "pre-home-2.0");
+          if (!label) return;
+          await fetch("/api/v1/baseline", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ label }),
+          });
+          boot(tab);
         },
       }),
       el("button", { text: "Refresh", onclick: () => boot(tab) }),
@@ -145,13 +197,15 @@ function render(tab, score, sources, meta, eng) {
 }
 
 async function boot(tab = "executive") {
-  const [score, sources, meta, eng] = await Promise.all([
+  const [score, sources, meta, eng, content, baselines] = await Promise.all([
     getJSON("/api/v1/score"),
     getJSON("/api/v1/sources/status"),
     getJSON("/api/v1/meta"),
     getJSON("/api/v1/engineering"),
+    getJSON("/api/v1/content"),
+    getJSON("/api/v1/baselines"),
   ]);
-  render(tab, score, sources, meta, eng);
+  render(tab, score, sources, meta, eng, content, baselines);
 }
 
 boot().catch((e) => {

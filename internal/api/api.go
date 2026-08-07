@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"os"
@@ -12,6 +13,8 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 
+	"github.com/lmcdasm/dasmlab-observatory-platform/internal/auth"
+	"github.com/lmcdasm/dasmlab-observatory-platform/internal/content"
 	"github.com/lmcdasm/dasmlab-observatory-platform/internal/scheduler"
 	"github.com/lmcdasm/dasmlab-observatory-platform/internal/score"
 	"github.com/lmcdasm/dasmlab-observatory-platform/internal/store"
@@ -23,6 +26,7 @@ type Deps struct {
 	Registry  *collector.Registry
 	Engine    *score.Engine
 	Scheduler *scheduler.Scheduler
+	Spine     *content.Spine
 	Tenant    string
 	Version   string
 	StaticDir string
@@ -37,6 +41,7 @@ func New(d Deps) *Server { return &Server{d: d} }
 func (s *Server) Handler() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID, middleware.RealIP, middleware.Logger, middleware.Recoverer)
+	r.Use(auth.Middleware)
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{"GET", "POST", "OPTIONS"},
@@ -50,6 +55,10 @@ func (s *Server) Handler() http.Handler {
 		r.Get("/sources/status", s.sources)
 		r.Get("/meta", s.meta)
 		r.Get("/engineering", s.engineering)
+		r.Get("/content", s.content)
+		r.Get("/baselines", s.listBaselines)
+		r.Post("/baseline", s.createBaseline)
+		r.Get("/baseline/diff", s.baselineDiff)
 		r.Post("/collect/run", s.runCollect)
 	})
 
@@ -146,8 +155,12 @@ func (s *Server) engineering(w http.ResponseWriter, _ *http.Request) {
 		"tenant":  s.d.Tenant,
 		"metrics": metrics,
 		"bots": map[string]any{
-			"googlebot_fetches": metrics["googlebot_fetches"],
-			"bot_hits":          metrics["bot_hits"],
+			"googlebot_fetches":    metrics["googlebot_fetches"],
+			"gptbot_fetches":       metrics["gptbot_fetches"],
+			"claudebot_fetches":    metrics["claudebot_fetches"],
+			"perplexitybot_fetches": metrics["perplexitybot_fetches"],
+			"bingbot_fetches":      metrics["bingbot_fetches"],
+			"bot_hits":             metrics["bot_hits"],
 		},
 		"index": map[string]any{
 			"sitemap_urls":          metrics["sitemap_urls"],
@@ -163,6 +176,93 @@ func (s *Server) engineering(w http.ResponseWriter, _ *http.Request) {
 			"engaged_sessions": metrics["engaged_sessions"],
 			"page_views":       metrics["page_views"],
 			"activity_events":  metrics["activity_events"],
+		},
+		"search": map[string]any{
+			"gsc_impressions": metrics["gsc_impressions"],
+			"gsc_clicks":      metrics["gsc_clicks"],
+			"gsc_ctr":         metrics["gsc_ctr"],
+			"gsc_position":    metrics["gsc_position"],
+		},
+	})
+}
+
+func (s *Server) content(w http.ResponseWriter, _ *http.Request) {
+	if s.d.Spine != nil {
+		_ = s.d.Spine.RefreshFromSitemap(context.Background())
+	}
+	paths, err := s.d.Store.TopPaths(s.d.Tenant, 30)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	ents, _ := s.d.Store.ListEntities(s.d.Tenant, "path")
+	writeJSON(w, http.StatusOK, map[string]any{
+		"tenant":       s.d.Tenant,
+		"paths":        paths,
+		"sitemap_urls": ents,
+	})
+}
+
+func (s *Server) createBaseline(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		Label string `json:"label"`
+	}
+	_ = json.NewDecoder(r.Body).Decode(&body)
+	if body.Label == "" {
+		body.Label = "snapshot-" + time.Now().UTC().Format("20060102-1504")
+	}
+	score, _ := s.d.Store.LatestScore(s.d.Tenant, "overall")
+	paths, _ := s.d.Store.TopPaths(s.d.Tenant, 20)
+	metrics, _ := s.d.Store.LatestMetrics(s.d.Tenant, time.Now().Add(-48*time.Hour))
+	sts, _ := s.d.Store.ListCollectorStatus()
+	payload := map[string]any{
+		"score":      score,
+		"paths":      paths,
+		"metrics":    metrics,
+		"collectors": sts,
+	}
+	if err := s.d.Store.SaveBaseline(s.d.Tenant, body.Label, payload); err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	writeJSON(w, http.StatusCreated, map[string]any{"label": body.Label, "payload": payload})
+}
+
+func (s *Server) listBaselines(w http.ResponseWriter, _ *http.Request) {
+	list, err := s.d.Store.ListBaselines(s.d.Tenant)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	writeJSON(w, http.StatusOK, list)
+}
+
+func (s *Server) baselineDiff(w http.ResponseWriter, r *http.Request) {
+	from := r.URL.Query().Get("from")
+	to := r.URL.Query().Get("to")
+	if from == "" || to == "" {
+		http.Error(w, "from and to labels required", 400)
+		return
+	}
+	a, err := s.d.Store.GetBaseline(s.d.Tenant, from)
+	if err != nil {
+		http.Error(w, "from baseline: "+err.Error(), 404)
+		return
+	}
+	b, err := s.d.Store.GetBaseline(s.d.Tenant, to)
+	if err != nil {
+		http.Error(w, "to baseline: "+err.Error(), 404)
+		return
+	}
+	var pa, pb map[string]any
+	_ = json.Unmarshal(a.Payload, &pa)
+	_ = json.Unmarshal(b.Payload, &pb)
+	writeJSON(w, http.StatusOK, map[string]any{
+		"from": a,
+		"to":   b,
+		"score_delta": map[string]any{
+			"from": pa["score"],
+			"to":   pb["score"],
 		},
 	})
 }

@@ -93,6 +93,16 @@ spec:
                   name: dpo-secrets
                   key: ACTIVITY_MACHINE_TOKEN
                   optional: true
+            - name: GSC_CREDENTIALS_JSON
+              valueFrom:
+                secretKeyRef:
+                  name: dpo-secrets
+                  key: GSC_CREDENTIALS_JSON
+                  optional: true
+            - name: GSC_SITE_URL
+              value: "https://dasmlab.org/"
+            - name: DPO_EDGE_LOG_PATH
+              value: /data/edge/access.log
           volumeMounts:
             - name: data
               mountPath: /data

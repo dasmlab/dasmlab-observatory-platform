@@ -1,15 +1,17 @@
 module github.com/lmcdasm/dasmlab-observatory-platform
 
-go 1.22.0
+go 1.25.0
 
 require (
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/cors v1.2.1
 	github.com/lmcdasm/dasmlab-observatory-platform/platform/collector-sdk v0.0.0
+	golang.org/x/oauth2 v0.36.0
 	modernc.org/sqlite v1.33.1
 )
 
 require (
+	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect

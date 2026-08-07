@@ -15,6 +15,7 @@ Observatories handle credentials (GSC, GitHub, AI APIs), first-party logs, and e
 - **Keycloak** realm `dasmlab` (shared with home/mock-me pattern).
 - OIDC for UIs; API keys / service accounts for collectors and agents.
 - Concepts: Organization → Teams → Projects → Tenants (digital properties / clusters).
+- DPO client id: `dpo`. Gate with `DPO_AUTH=oidc` via `internal/auth` middleware stub (Track B — pilot stays open until client is registered).
 
 ### RBAC (v0 roles)
 

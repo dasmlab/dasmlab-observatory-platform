@@ -62,6 +62,7 @@ func (c *activityCollector) Collect(ctx context.Context) error {
 	var payload struct {
 		Events []struct {
 			Type      string `json:"type"`
+			Path      string `json:"path"`
 			EngagedMs int64  `json:"engagedMs"`
 			Bot       bool   `json:"bot"`
 		} `json:"events"`
@@ -70,6 +71,7 @@ func (c *activityCollector) Collect(ctx context.Context) error {
 		return err
 	}
 	var pages, engaged, bots float64
+	pathViews := map[string]float64{}
 	for _, e := range payload.Events {
 		if e.Bot {
 			bots++
@@ -78,6 +80,9 @@ func (c *activityCollector) Collect(ctx context.Context) error {
 		switch e.Type {
 		case "page", "navigate":
 			pages++
+			if e.Path != "" {
+				pathViews[e.Path]++
+			}
 		case "engaged":
 			engaged++
 		}
@@ -88,6 +93,11 @@ func (c *activityCollector) Collect(ctx context.Context) error {
 		evt(c.tenant, "activity", "journey", "page_views", pages, dims),
 		evt(c.tenant, "activity", "journey", "bot_hits", bots, dims),
 		evt(c.tenant, "activity", "journey", "activity_events", float64(len(payload.Events)), dims),
+	}
+	for p, v := range pathViews {
+		c.buf = append(c.buf, evt(c.tenant, "activity", "journey", "path_page_views", v, map[string]string{
+			"mode": "live", "source": "surfing", "path": p,
+		}))
 	}
 	return ctx.Err()
 }
