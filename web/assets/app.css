@@ -134,6 +134,19 @@ button {
   cursor: pointer;
 }
 button:hover { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+
+.nav { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; animation: rise 0.7s ease 0.1s both; }
+.nav-btn {
+  border-color: var(--line);
+  background: transparent;
+  color: var(--muted);
+}
+.nav-btn.active {
+  border-color: var(--accent);
+  color: var(--ink);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
 .meta { color: var(--muted); font-size: 0.85rem; margin-top: 2rem; }
 
 @keyframes rise {

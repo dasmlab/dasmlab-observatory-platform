@@ -49,6 +49,7 @@ func (s *Server) Handler() http.Handler {
 		r.Get("/score/history", s.scoreHistory)
 		r.Get("/sources/status", s.sources)
 		r.Get("/meta", s.meta)
+		r.Get("/engineering", s.engineering)
 		r.Post("/collect/run", s.runCollect)
 	})
 
@@ -133,6 +134,37 @@ func (s *Server) sources(w http.ResponseWriter, _ *http.Request) {
 func (s *Server) runCollect(w http.ResponseWriter, _ *http.Request) {
 	go s.d.Scheduler.RunOnce()
 	writeJSON(w, http.StatusAccepted, map[string]string{"status": "started"})
+}
+
+func (s *Server) engineering(w http.ResponseWriter, _ *http.Request) {
+	metrics, err := s.d.Store.LatestMetrics(s.d.Tenant, time.Now().Add(-48*time.Hour))
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{
+		"tenant":  s.d.Tenant,
+		"metrics": metrics,
+		"bots": map[string]any{
+			"googlebot_fetches": metrics["googlebot_fetches"],
+			"bot_hits":          metrics["bot_hits"],
+		},
+		"index": map[string]any{
+			"sitemap_urls":          metrics["sitemap_urls"],
+			"sitemap_freshness_pct": metrics["sitemap_freshness_pct"],
+			"tech_health":           metrics["tech_health"],
+		},
+		"authority": map[string]any{
+			"github_stars":       metrics["github_stars"],
+			"github_forks":       metrics["github_forks"],
+			"github_open_issues": metrics["github_open_issues"],
+		},
+		"engagement": map[string]any{
+			"engaged_sessions": metrics["engaged_sessions"],
+			"page_views":       metrics["page_views"],
+			"activity_events":  metrics["activity_events"],
+		},
+	})
 }
 
 func writeJSON(w http.ResponseWriter, code int, v any) {

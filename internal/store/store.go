@@ -177,6 +177,28 @@ func (s *Store) ListCollectorStatus() ([]CollectorStatus, error) {
 	return out, rows.Err()
 }
 
+func (s *Store) LatestMetrics(tenant string, since time.Time) (map[string]float64, error) {
+	rows, err := s.db.Query(`
+SELECT metric, value FROM events
+WHERE tenant=? AND ts>=? AND id IN (
+  SELECT MAX(id) FROM events WHERE tenant=? AND ts>=? GROUP BY metric
+)`, tenant, since.UTC().Format(time.RFC3339), tenant, since.UTC().Format(time.RFC3339))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	out := map[string]float64{}
+	for rows.Next() {
+		var m string
+		var v float64
+		if err := rows.Scan(&m, &v); err != nil {
+			return nil, err
+		}
+		out[m] = v
+	}
+	return out, rows.Err()
+}
+
 func (s *Store) MetricAvg(tenant, metric string, since time.Time) (float64, error) {
 	row := s.db.QueryRow(`SELECT AVG(value) FROM events WHERE tenant=? AND metric=? AND ts>=?`, tenant, metric, since.UTC().Format(time.RFC3339))
 	var v sql.NullFloat64
@@ -188,3 +210,4 @@ func (s *Store) MetricAvg(tenant, metric string, since time.Time) (float64, erro
 	}
 	return v.Float64, nil
 }
+

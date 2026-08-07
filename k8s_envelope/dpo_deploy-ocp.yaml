@@ -75,6 +75,24 @@ spec:
               value: "https://keycloak.apps.2026-prod-1.ocp.dasmlab.org"
             - name: KEYCLOAK_REALM
               value: dasmlab
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: dpo-secrets
+                  key: GITHUB_TOKEN
+                  optional: true
+            - name: GITHUB_REPOS
+              value: "lmcdasm/dasmlab-observatory-platform,lmcdasm/cheapcloud,lmcdasm/dasmlab-cdn-mgr,lmcdasm/dasmlab_home"
+            - name: DPO_SITE_BASE
+              value: "https://dasmlab.org"
+            - name: DPO_ACTIVITY_URL
+              value: "http://surfing-service.surfing-service-system.svc.cluster.local:10023/activity?limit=200"
+            - name: DPO_ACTIVITY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: dpo-secrets
+                  key: ACTIVITY_MACHINE_TOKEN
+                  optional: true
           volumeMounts:
             - name: data
               mountPath: /data

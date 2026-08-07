@@ -30,8 +30,8 @@ func (e *Engine) Recompute() error {
 	comps := map[string]float64{
 		"seo":        clamp(e.metricOr(70, "gsc_impressions", 0.02)),
 		"geo":        50, // placeholder until AI collectors
-		"authority":  clamp(e.metricOr(60, "github_stars", 2)),
-		"engagement": clamp(e.metricOr(65, "engaged_sessions", 5)),
+		"authority":  e.mapMetric(60, "github_stars", func(v float64) float64 { return 45 + v*8 }),
+		"engagement": e.mapMetric(65, "engaged_sessions", func(v float64) float64 { return 40 + v*3 }),
 		"freshness":  clamp(e.metricOr(80, "sitemap_freshness_pct", 1)),
 		"trust":      clamp(e.metricOr(90, "tech_health", 1)),
 	}
@@ -55,6 +55,14 @@ func (e *Engine) metricOr(fallback float64, metric string, scale float64) float6
 		return fallback
 	}
 	return clamp(v * scale)
+}
+
+func (e *Engine) mapMetric(fallback float64, metric string, fn func(float64) float64) float64 {
+	v, err := e.st.MetricAvg(e.tenant, metric, time.Now().Add(-7*24*time.Hour))
+	if err != nil {
+		return fallback
+	}
+	return clamp(fn(v))
 }
 
 func clamp(v float64) float64 {
