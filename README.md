@@ -17,6 +17,7 @@
 2. [ADR Index](./docs/adr/README.md)
 3. [ADR-0001 Platform Vision](./docs/adr/ADR-0001-observatory-platform-vision.md)
 4. [ADR-0400 DPO](./docs/adr/ADR-0400-digital-presence-observatory.md)
+5. [Edge topology (HAProxy)](./docs/standards/EDGE-TOPOLOGY.md)
 
 ## Run locally
 

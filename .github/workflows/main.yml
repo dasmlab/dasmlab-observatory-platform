@@ -78,6 +78,19 @@ jobs:
           buildah push "${IMAGE}"
           echo "IMAGE=${IMAGE}" >> "$GITHUB_ENV"
 
+      - name: Ensure HAProxy CERT for DPO FQDNs
+        if: success()
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          # Vanity / edge hosts (HAProxy + Let's Encrypt). OCP apps.* routes use
+          # the cluster router wildcard and do not need CERT* entries here.
+          for FQDN in dpo.dasmlab.org; do
+            bash scripts/ci/ensure-prod-cert.sh "${FQDN}" || true
+          done
+          # Dev / preview hosts (when present): same script family as home/interview-me.
+          # Example: bash scripts/ci/ensure-preview-cert.sh "dev-${GITHUB_ACTOR}-dpo.apps...."
+
       - name: GitOps publish to dasmlab-live-cicd
         run: |
           set -euo pipefail

@@ -62,7 +62,7 @@ Document runtime weights in `products/dpo/docs/SCORES.md` when code lands.
 |-----------|-------|
 | `gsc` | P1 |
 | `github` | P1 |
-| `edge-logs` (nginx/CF) | P1 |
+| `edge-logs` (HAProxy / CF / optional app logs) | P1 |
 | `activity` (Surfing bridge) | P1 |
 | AI engines (OpenAI, Anthropic, Gemini, Perplexity, …) | P2 |
 | Bing, sitemap, robots, crawler, Reddit/YouTube/LinkedIn | P2+ |

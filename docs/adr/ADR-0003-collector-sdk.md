@@ -68,7 +68,7 @@ Scheduler invokes Discover (as needed) → Collect → Normalize on cron or manu
 |--------|--------|-------|
 | `gsc` | Google Search Console | DPO P1 |
 | `github` | GitHub API | DPO P1 |
-| `edge-logs` | nginx / Cloudflare bot & traffic logs | DPO P1 |
+| `edge-logs` | HAProxy / Cloudflare bot & traffic logs (not home SPA nginx) | DPO P1 |
 | `activity` | Surfing Activity CDP bridge | DPO P1 |
 | `ai-openai` / `ai-anthropic` / … | Official AI APIs | DPO P2 |
 | `bing` | Bing Webmaster | DPO P2 |
