@@ -58,6 +58,9 @@ func (c *githubCollector) Collect(ctx context.Context) error {
 		}
 		body, _ := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
 		_ = resp.Body.Close()
+		if resp.StatusCode == http.StatusNotFound {
+			continue
+		}
 		if resp.StatusCode >= 300 {
 			return fmt.Errorf("github %s: %s", full, resp.Status)
 		}
@@ -97,7 +100,7 @@ func (c *githubCollector) Normalize(ctx context.Context) ([]collector.Event, err
 func parseRepoAllowlist() []string {
 	raw := strings.TrimSpace(os.Getenv("GITHUB_REPOS"))
 	if raw == "" {
-		raw = "lmcdasm/dasmlab-observatory-platform,lmcdasm/cheapcloud,lmcdasm/dasmlab-cdn-mgr,lmcdasm/dasmlab_home"
+		raw = "lmcdasm/dasmlab-observatory-platform,lmcdasm/cheapcloud,lmcdasm/dasmlab_home"
 	}
 	var out []string
 	for _, p := range strings.Split(raw, ",") {

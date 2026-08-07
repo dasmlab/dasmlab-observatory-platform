@@ -82,7 +82,7 @@ spec:
                   key: GITHUB_TOKEN
                   optional: true
             - name: GITHUB_REPOS
-              value: "lmcdasm/dasmlab-observatory-platform,lmcdasm/cheapcloud,lmcdasm/dasmlab-cdn-mgr,lmcdasm/dasmlab_home"
+              value: "lmcdasm/dasmlab-observatory-platform,lmcdasm/cheapcloud,lmcdasm/dasmlab_home"
             - name: DPO_SITE_BASE
               value: "https://dasmlab.org"
             - name: DPO_ACTIVITY_URL
