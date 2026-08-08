@@ -1,13 +1,8 @@
 # Digital Presence Observatory (DPO)
 
-Thin product specialization of DOP. See [ADR-0400](../../docs/adr/ADR-0400-digital-presence-observatory.md).
+First **live** specialization of DOP. See [ADR-0400](../../docs/adr/ADR-0400-digital-presence-observatory.md).
 
-## Status
+**Avoid:** Clicks, CTR, Rank, Traffic as the story.  
+**Measure:** AI Citation Velocity, Authority Growth, Topic Coverage, Knowledge Graph Density, Engineering Trust, Problem Ownership, Content Originality, Research Influence, Innovation Score.
 
-Scaffold only. Phase 1 MVP implementation follows ADR-0400 after platform ADRs.
-
-## Depends on
-
-- `platform/collector-sdk`
-- `platform/observatory-sdk`
-- ADRs 0002–0007, 9999
+Runtime currently lives at repo root (`cmd/dpo-api`); this folder is the product contract surface as siblings grow.

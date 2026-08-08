@@ -1,13 +1,41 @@
-# Novel scores catalog (DPO / DOP)
+# Novel scores catalog — Observatory Platform differentiators
 
-Scores beyond Overall / SEO / Engagement / Trust. Mapped to future collectors (Track B).
+Gate (ADR-9999): measure / correlate / predict / visualize / automate something **nobody** measures today.
 
-| Score | Intent | Collector / signal (later) |
-|-------|--------|----------------------------|
-| Citation Velocity | How fast brand/hubs appear in AI answers over time | GEO / ADR-0401 |
-| Topic Coverage | Breadth of hubs covered vs sitemap spine | content spine + GEO |
-| Crawl Diversity | Distinct bot families hitting paths | edge-logs |
-| Authority Freshness | GitHub/docs recency vs public claims | github + website |
-| Journey Depth | Engaged paths beyond bounce | Activity |
+## DPO — Digital Presence
 
-Track-home MVP uses Overall components only; freeze baselines before expanding this catalog into the engine.
+| Avoid (commodity) | Measure instead |
+|-------------------|-----------------|
+| Clicks, CTR, Rank, Traffic | AI Citation Velocity, Authority Growth, Topic Coverage, Knowledge Graph Density, Engineering Trust, Problem Ownership, Content Originality, Research Influence, Innovation Score |
+
+## DCO — Cloud
+
+| Avoid | Measure instead |
+|-------|-----------------|
+| CPU, Memory, Pods | Operational Complexity, Cluster Maintainability, Technical Debt, Deployment Confidence, Recovery Confidence, Automation Maturity, Engineering Efficiency |
+
+## DSO — Security
+
+| Avoid | Measure instead |
+|-------|-----------------|
+| CVE lists alone | Attack Surface Evolution, Risk Momentum, Patch Confidence, Exploit Probability, Blast Radius, Privilege Complexity, Secrets Hygiene |
+
+## DAO — AI
+
+| Avoid | Measure instead |
+|-------|-----------------|
+| Prompt logs alone | Model Drift, Prompt Effectiveness, Knowledge Freshness, Citation Accuracy, Reasoning Stability, Inference Cost, AI Trust Score |
+
+## DNO — Network
+
+| Avoid | Measure instead |
+|-------|-----------------|
+| Bandwidth alone | Path Stability, Routing Confidence, Failure Prediction, Policy Complexity, Service Reachability, Intent Compliance |
+
+## DUO — Unified
+
+| Avoid | Measure instead |
+|-------|-----------------|
+| Aggregated dashboards | Business Impact → Engineering Impact → Operational Impact → Recommended Actions |
+
+Track-home MVP still scores Overall components; novel scores enter the engine as collectors land. Live catalog: `GET /api/v1/family`.

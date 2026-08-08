@@ -15,11 +15,12 @@ Engineering platforms that make complex systems **observable, understandable, au
 
 ## Start here
 
-1. [Engineering Principles](./docs/standards/ENGINEERING-PRINCIPLES.md)
-2. [ADR Index](./docs/adr/README.md)
-3. [ADR-0001 Platform Vision](./docs/adr/ADR-0001-observatory-platform-vision.md)
-4. [ADR-0400 DPO](./docs/adr/ADR-0400-digital-presence-observatory.md)
-5. [Edge topology (HAProxy)](./docs/standards/EDGE-TOPOLOGY.md)
+1. [Observatory family](./docs/OBSERVATORY-FAMILY.md) — products, differentiators, layout
+2. [Novel scores](./docs/SCORES.md) — what we measure instead of commodity metrics
+3. [Engineering Principles](./docs/standards/ENGINEERING-PRINCIPLES.md)
+4. [ADR Index](./docs/adr/README.md) · [ADR-0001 Vision](./docs/adr/ADR-0001-observatory-platform-vision.md) · [ADR-9999 Innovation](./docs/adr/ADR-9999-innovation-principles.md)
+5. [ADR-0400 DPO](./docs/adr/ADR-0400-digital-presence-observatory.md) (first live product)
+6. Live UI **Family** tab → `GET /api/v1/family`
 
 ## Run locally
 

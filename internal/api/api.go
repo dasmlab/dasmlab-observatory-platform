@@ -14,6 +14,7 @@ import (
 	"github.com/go-chi/cors"
 
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/auth"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/family"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/content"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/scheduler"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/score"
@@ -54,6 +55,7 @@ func (s *Server) Handler() http.Handler {
 		r.Get("/score/history", s.scoreHistory)
 		r.Get("/sources/status", s.sources)
 		r.Get("/meta", s.meta)
+		r.Get("/family", s.family)
 		r.Get("/engineering", s.engineering)
 		r.Get("/content", s.content)
 		r.Get("/baselines", s.listBaselines)
@@ -79,12 +81,20 @@ func (s *Server) healthz(w http.ResponseWriter, _ *http.Request) {
 	})
 }
 
+
+func (s *Server) family(w http.ResponseWriter, _ *http.Request) {
+	c := family.Default()
+	c.ActiveProduct = "dpo"
+	writeJSON(w, http.StatusOK, c)
+}
+
 func (s *Server) meta(w http.ResponseWriter, _ *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]any{
 		"tenant":  s.d.Tenant,
 		"version": s.d.Version,
 		"product": "dpo",
 		"platform": "dop",
+		"family":   "/api/v1/family",
 		"five_questions": []string{
 			"What exists?", "What changed?", "Why did it change?", "What will happen?", "What should I do?",
 		},
