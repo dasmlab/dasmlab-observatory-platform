@@ -17,6 +17,7 @@ import (
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/content"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/duo"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/family"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/products"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/scheduler"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/score"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/store"
@@ -57,6 +58,8 @@ func (s *Server) Handler() http.Handler {
 		r.Get("/sources/status", s.sources)
 		r.Get("/meta", s.meta)
 		r.Get("/family", s.family)
+		r.Get("/products", s.productsList)
+		r.Get("/products/{code}", s.productOne)
 		r.Get("/duo/impact", s.duoImpact)
 		r.Get("/duo/recommend", s.duoRecommend)
 		r.Get("/engineering", s.engineering)
@@ -88,25 +91,103 @@ func (s *Server) healthz(w http.ResponseWriter, _ *http.Request) {
 func (s *Server) family(w http.ResponseWriter, _ *http.Request) {
 	c := family.Default()
 	c.ActiveProduct = "dpo"
+	snaps := products.ListFromStore(s.d.Store, s.d.Tenant)
+	by := map[string]products.Snapshot{}
+	for _, sn := range snaps {
+		by[sn.Code] = sn
+	}
+	liveSiblings := 0
+	for i := range c.Products {
+		code := c.Products[i].Code
+		if sn, ok := by[code]; ok && (sn.Mode == "live" || sn.Mode == "demo") {
+			c.Products[i].Status = "live"
+			if code != "dpo" && code != "duo" {
+				liveSiblings++
+			}
+		}
+	}
+	if liveSiblings >= 2 {
+		for i := range c.Products {
+			if c.Products[i].Code == "duo" {
+				c.Products[i].Status = "live"
+			}
+		}
+	}
 	writeJSON(w, http.StatusOK, c)
 }
 
-func (s *Server) duoImpact(w http.ResponseWriter, _ *http.Request) {
+func (s *Server) productsList(w http.ResponseWriter, _ *http.Request) {
+	list := products.ListFromStore(s.d.Store, s.d.Tenant)
+	for i := range list {
+		if list[i].Code == "duo" {
+			list[i] = s.duoProductSnapshot()
+		}
+	}
+	writeJSON(w, http.StatusOK, list)
+}
+
+func (s *Server) productOne(w http.ResponseWriter, r *http.Request) {
+	code := strings.ToLower(chi.URLParam(r, "code"))
+	if code == "duo" {
+		writeJSON(w, http.StatusOK, s.duoProductSnapshot())
+		return
+	}
+	if _, ok := products.Spec(code); !ok {
+		http.Error(w, "unknown product", http.StatusNotFound)
+		return
+	}
+	writeJSON(w, http.StatusOK, products.FromStore(s.d.Store, s.d.Tenant, code))
+}
+
+func (s *Server) duoInputs() (duo.Inputs, duo.ImpactChain) {
 	overall := 55.0
 	live := false
 	if snap, err := s.d.Store.LatestScore(s.d.Tenant, "overall"); err == nil && snap != nil {
 		overall = snap.Value
 		live = true
 	}
-	writeJSON(w, http.StatusOK, duo.Compose(s.d.Tenant, overall, live))
+	snaps := products.ListFromStore(s.d.Store, s.d.Tenant)
+	in := duo.InputsFromSnapshots(overall, live, snaps)
+	chain := duo.Compose(s.d.Tenant, in)
+	return in, chain
+}
+
+func (s *Server) duoProductSnapshot() products.Snapshot {
+	_, chain := s.duoInputs()
+	scores := []products.Score{
+		{Name: "business_impact", Value: chain.Business.Score, Mode: "live"},
+		{Name: "engineering_impact", Value: chain.Engineering.Score, Mode: "live"},
+		{Name: "operational_impact", Value: chain.Operational.Score, Mode: "live"},
+	}
+	scaffold := 0
+	for _, src := range chain.Sources {
+		if src.Mode == "scaffold" {
+			scaffold++
+		}
+	}
+	mode := "live"
+	if scaffold > len(chain.Sources)/2 {
+		mode = "demo"
+	}
+	return products.Snapshot{
+		Code:     "duo",
+		Status:   products.StatusFromMode(mode),
+		Mode:     mode,
+		Scores:   scores,
+		Features: []string{"Impact chain", "Recommended action"},
+		LastRun:  chain.Generated,
+		Proof:    []string{"Compose sibling scores", "ADR-0006 recommend with ≥2 evidence"},
+	}
+}
+
+func (s *Server) duoImpact(w http.ResponseWriter, _ *http.Request) {
+	_, chain := s.duoInputs()
+	writeJSON(w, http.StatusOK, chain)
 }
 
 func (s *Server) duoRecommend(w http.ResponseWriter, _ *http.Request) {
-	overall := 55.0
-	if snap, err := s.d.Store.LatestScore(s.d.Tenant, "overall"); err == nil && snap != nil {
-		overall = snap.Value
-	}
-	writeJSON(w, http.StatusOK, duo.Recommend(s.d.Tenant, overall))
+	in, chain := s.duoInputs()
+	writeJSON(w, http.StatusOK, duo.Recommend(s.d.Tenant, in, chain))
 }
 
 func (s *Server) meta(w http.ResponseWriter, _ *http.Request) {

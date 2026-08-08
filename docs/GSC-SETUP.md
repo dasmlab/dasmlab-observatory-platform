@@ -1,35 +1,54 @@
-# Google Search Console setup (DPO)
+# GSC credentials — plain English
 
-## Why
+## What it is
 
-Live SEO scores require Search Console analytics — not demo impressions.
+A **JSON key file** Google gives you for a *service account*. It looks like:
 
-## Steps (2026)
-
-1. In [Google Cloud Console](https://console.cloud.google.com), create/reuse a project.
-2. Enable **Google Search Console API** (`searchconsole.googleapis.com` / webmasters).
-3. Create a **service account** (no GCP roles required for GSC read).
-4. Create a **JSON key**; store as cluster secret (never commit):
-
-```bash
-# From a machine with oc + the key file:
-oc create secret generic dpo-secrets -n dpo-system \
-  --from-file=GSC_CREDENTIALS_JSON=/path/to/sa.json \
-  --from-literal=GITHUB_TOKEN="$(tr -d '\n\r' < /home/dasm/gh_token)" \
-  --from-literal=ACTIVITY_MACHINE_TOKEN="$(oc get secret dpo-secrets -n dpo-system -o jsonpath='{.data.ACTIVITY_MACHINE_TOKEN}' | base64 -d)" \
-  --dry-run=client -o yaml | oc apply -f -
+```json
+{
+  "type": "service_account",
+  "project_id": "your-project",
+  "private_key_id": "...",
+  "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
+  "client_email": "dpo-gsc@YOUR-PROJECT.iam.gserviceaccount.com",
+  "client_id": "...",
+  "token_uri": "https://oauth2.googleapis.com/token"
+}
 ```
 
-Or patch an existing secret:
+That whole file (as one string) is what we call **`GSC_CREDENTIALS_JSON`**.
+
+I **cannot invent** a valid key — only Google can issue it. Once you download the file once, I can install it into the cluster for you.
+
+## Where it goes
+
+Kubernetes secret in the DPO namespace:
+
+| | |
+|--|--|
+| Namespace | `dpo-system` |
+| Secret name | `dpo-secrets` |
+| Secret **key** | `GSC_CREDENTIALS_JSON` |
+| Pod env | already wired in the Deployment |
+
+Today that secret only has `GITHUB_TOKEN` and `ACTIVITY_MACHINE_TOKEN` — **no GSC key yet**, so GSC stays in demo mode.
+
+## What you do (once)
+
+1. Google Cloud Console → create/reuse a project → enable **Search Console API**.
+2. Create a service account → **Keys → Add key → JSON** → save as e.g. `~/dpo-gsc-sa.json`.
+3. Search Console → property **`dasmlab.org`** (domain = `sc-domain:dasmlab.org`) → **Users and permissions** → add the `client_email` from that JSON (Restricted is enough).
+4. DPO must use **`GSC_SITE_URL=sc-domain:dasmlab.org`** (matches the domain property). Do **not** use `https://dasmlab.org/` unless that URL-prefix property also has the SA as a user.
+5. Tell me the path to the file **or** run:
 
 ```bash
-oc patch secret dpo-secrets -n dpo-system --type merge -p \
-  "{\"stringData\":{\"GSC_CREDENTIALS_JSON\":$(jq -c -R -s . </path/to/sa.json)}}"
+bash /home/dasm/dasmlab-observatory-platform/scripts/ci/install-gsc-secret.sh ~/dpo-gsc-sa.json
 ```
 
-5. In [Search Console](https://search.google.com/search-console) → property `dasmlab.org` (URL-prefix `https://dasmlab.org/` or domain) → **Settings → Users and permissions → Add user**.
-6. Paste the SA email (`client_email` in the JSON). Permission: **Restricted** (read-only) is enough.
-7. Set env `GSC_SITE_URL` to the exact property string (default `https://dasmlab.org/`).
-8. Rollout DPO / run collectors. `mode=live` appears on GSC events when the secret is present.
+That script patches `dpo-secrets` and rolls the DPO pod. After that, collectors use live GSC (`mode=live`).
 
-Without the secret, the collector stays in **demo** mode (healthy) unless `DPO_REQUIRE_LIVE_CREDS=1`.
+## Not this
+
+- Not a Google password
+- Not an API key string alone
+- Not something to commit into git

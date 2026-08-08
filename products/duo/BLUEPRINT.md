@@ -1,6 +1,6 @@
 # DUO — Unified Observatory Blueprint
 
-**ADR:** 0700 · **Status:** scaffold · **Maturity target:** L3→L5
+**ADR:** 0700 · **Status:** live · **Maturity target:** L3→L5
 
 ![Context](./diagrams/duo-context.svg)
 

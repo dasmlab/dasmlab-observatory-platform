@@ -120,9 +120,18 @@ function familyView(fam) {
             )
           ),
           el("div", { class: "fam-scores", text: (p.novel_scores || []).slice(0, 4).join(" · ") }),
+          el("div", {
+            class: "meta",
+            text: "Scores: loading…",
+            "data-product": p.code,
+          }),
         ])
       )
     ),
+    el("div", {
+      class: "meta",
+      text: "Product APIs: GET /api/v1/products and /api/v1/products/{code}",
+    }),
     el("h2", { class: "section-title", text: "Shared pipeline" }),
     el("p", { class: "meta", text: (fam?.architecture_pipeline || []).join(" → ") }),
     el("h2", { class: "section-title", text: "Platform layers" }),
@@ -194,7 +203,10 @@ function duoView(impact, rec) {
       (impact?.sources || []).map((s) =>
         el("div", { class: "src" }, [
           el("strong", { text: s.product + "." + s.name }),
-          el("span", { class: "pill " + (s.mode === "live" ? "ok" : "muted"), text: s.mode + " " + s.value }),
+          el("span", {
+            class: "pill " + (s.mode === "live" ? "ok" : s.mode === "demo" ? "muted" : "bad"),
+            text: s.mode + " " + s.value,
+          }),
         ])
       )
     ),
@@ -359,7 +371,7 @@ function render(tab, score, sources, meta, eng, content, baselines, fam, impact,
 }
 
 async function boot(tab = "family") {
-  const [score, sources, meta, eng, content, baselines, fam, impact, rec] = await Promise.all([
+  const [score, sources, meta, eng, content, baselines, fam, impact, rec, productList] = await Promise.all([
     getJSON("/api/v1/score"),
     getJSON("/api/v1/sources/status"),
     getJSON("/api/v1/meta"),
@@ -369,8 +381,18 @@ async function boot(tab = "family") {
     getJSON("/api/v1/family"),
     getJSON("/api/v1/duo/impact"),
     getJSON("/api/v1/duo/recommend"),
+    getJSON("/api/v1/products").catch(() => []),
   ]);
   render(tab, score, sources, meta, eng, content, baselines, fam, impact, rec);
+  if (tab === "family" && Array.isArray(productList)) {
+    const by = Object.fromEntries(productList.map((p) => [p.code, p]));
+    document.querySelectorAll("[data-product]").forEach((node) => {
+      const p = by[node.dataset.product];
+      if (!p) return;
+      const bits = (p.scores || []).map((s) => s.name + "=" + s.value + "(" + s.mode + ")");
+      node.textContent = bits.length ? bits.join(" · ") : "no scores yet — run collectors";
+    });
+  }
 }
 
 boot().catch((e) => {

@@ -44,7 +44,8 @@ func (c *gscCollector) Collect(ctx context.Context) error {
 	raw := strings.TrimSpace(os.Getenv("GSC_CREDENTIALS_JSON"))
 	site := strings.TrimSpace(os.Getenv("GSC_SITE_URL"))
 	if site == "" {
-		site = "https://dasmlab.org/"
+		// Domain property in Search Console (not URL-prefix https://…).
+		site = "sc-domain:dasmlab.org"
 	}
 	if raw == "" {
 		c.buf = []collector.Event{

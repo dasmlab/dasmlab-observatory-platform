@@ -1,6 +1,6 @@
 # DIO — Infrastructure Observatory Blueprint
 
-**ADR:** 0600 · **Status:** scaffold · **Maturity target:** L1→L2
+**ADR:** 0600 · **Status:** live · **Maturity target:** L1→L2
 
 ![Context](./diagrams/dio-context.svg)
 

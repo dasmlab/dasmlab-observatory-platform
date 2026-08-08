@@ -109,7 +109,7 @@ func Default() Catalog {
 				},
 			},
 			{
-				Code: "dco", Name: "Cloud Observatory", ADR: "0100", Status: "scaffold",
+				Code: "dco", Name: "Cloud Observatory", ADR: "0100", Status: "live",
 				Blueprint:      "products/dco/BLUEPRINT.md",
 				CommodityAvoid: []string{"CPU", "Memory", "Pods"},
 				NovelScores: []string{
@@ -133,7 +133,7 @@ func Default() Catalog {
 				},
 			},
 			{
-				Code: "dso", Name: "Security Observatory", ADR: "0300", Status: "scaffold",
+				Code: "dso", Name: "Security Observatory", ADR: "0300", Status: "live",
 				Blueprint:      "products/dso/BLUEPRINT.md",
 				CommodityAvoid: []string{"CVE lists alone"},
 				NovelScores: []string{
@@ -156,7 +156,7 @@ func Default() Catalog {
 				},
 			},
 			{
-				Code: "dao", Name: "AI Observatory", ADR: "0500", Status: "scaffold",
+				Code: "dao", Name: "AI Observatory", ADR: "0500", Status: "live",
 				Blueprint:      "products/dao/BLUEPRINT.md",
 				CommodityAvoid: []string{"Prompt logs alone"},
 				NovelScores: []string{
@@ -179,7 +179,7 @@ func Default() Catalog {
 				},
 			},
 			{
-				Code: "dno", Name: "Network Observatory", ADR: "0200", Status: "scaffold",
+				Code: "dno", Name: "Network Observatory", ADR: "0200", Status: "live",
 				Blueprint:      "products/dno/BLUEPRINT.md",
 				CommodityAvoid: []string{"Bandwidth alone"},
 				NovelScores: []string{
@@ -202,7 +202,7 @@ func Default() Catalog {
 				},
 			},
 			{
-				Code: "dio", Name: "Infrastructure Observatory", ADR: "0600", Status: "scaffold",
+				Code: "dio", Name: "Infrastructure Observatory", ADR: "0600", Status: "live",
 				Blueprint:      "products/dio/BLUEPRINT.md",
 				CommodityAvoid: []string{"Disk / host metrics alone"},
 				NovelScores: []string{
@@ -225,7 +225,7 @@ func Default() Catalog {
 				},
 			},
 			{
-				Code: "daops", Name: "DevOps Observatory", ADR: "0650", Status: "scaffold",
+				Code: "daops", Name: "DevOps Observatory", ADR: "0650", Status: "live",
 				Blueprint:      "products/daops/BLUEPRINT.md",
 				CommodityAvoid: []string{"Pipeline green/red alone"},
 				NovelScores: []string{
@@ -248,7 +248,7 @@ func Default() Catalog {
 				},
 			},
 			{
-				Code: "duo", Name: "Unified Observatory", ADR: "0700", Status: "scaffold",
+				Code: "duo", Name: "Unified Observatory", ADR: "0700", Status: "live",
 				Blueprint:      "products/duo/BLUEPRINT.md",
 				CommodityAvoid: []string{"Aggregated dashboards"},
 				NovelScores: []string{
@@ -258,7 +258,7 @@ func Default() Catalog {
 					{
 						ID: "duo-f1", Name: "Impact chain view", NovelSignal: "Business→Engineering→Operational",
 						FiveQFocus: []string{"exists", "changed", "why", "will happen", "should do"},
-						Proof:      "Compose scores from DPO + sibling stubs into impact chain API",
+						Proof:      "Compose scores from DPO + sibling product collectors into impact chain API",
 						ChainRole:  "Executive ending of E2E demo",
 					},
 					{

@@ -1,6 +1,6 @@
 # DCO — Cloud Observatory Blueprint
 
-**ADR:** 0100 · **Status:** scaffold · **Maturity target:** L1→L2
+**ADR:** 0100 · **Status:** live · **Maturity target:** L1→L2
 
 ![Context](./diagrams/dco-context.svg)
 

@@ -7,6 +7,39 @@ metadata:
 imagePullSecrets:
   - name: dasmlab-ghcr-pull
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: dpo-observe
+  namespace: dpo-system
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services", "secrets", "persistentvolumeclaims", "endpoints"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["cronjobs", "jobs"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["route.openshift.io"]
+    resources: ["routes"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dpo-observe
+  namespace: dpo-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: dpo-observe
+subjects:
+  - kind: ServiceAccount
+    name: dpo
+    namespace: dpo-system
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -71,6 +104,16 @@ spec:
               value: "__VERSION__"
             - name: DPO_CLUSTER
               value: "__CLUSTER__"
+            - name: DPO_WATCH_NS
+              value: dpo-system
+            - name: DPO_PUBLIC_URL
+              value: "https://__ROUTE_HOST__"
+            - name: DPO_FAILOVER_URL
+              value: "https://dpo-dasmlab.apps.2026-prod-2-1.ocp.dasmlab.org"
+            - name: DAO_PROMPTS_PATH
+              value: /app/docs/PROMPTS.md
+            - name: DAOPS_GITHUB_REPO
+              value: dasmlab/dasmlab-observatory-platform
             - name: KEYCLOAK_URL
               value: "https://keycloak.apps.2026-prod-1.ocp.dasmlab.org"
             - name: KEYCLOAK_REALM
@@ -100,7 +143,7 @@ spec:
                   key: GSC_CREDENTIALS_JSON
                   optional: true
             - name: GSC_SITE_URL
-              value: "https://dasmlab.org/"
+              value: "sc-domain:dasmlab.org"
             - name: DPO_EDGE_LOG_PATH
               value: /data/edge/access.log
           volumeMounts:

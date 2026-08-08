@@ -1,6 +1,6 @@
 # DSO — Security Observatory Blueprint
 
-**ADR:** 0300 · **Status:** scaffold · **Maturity target:** L2
+**ADR:** 0300 · **Status:** live · **Maturity target:** L2
 
 ![Context](./diagrams/dso-context.svg)
 

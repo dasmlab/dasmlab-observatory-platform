@@ -19,6 +19,13 @@ func Default(tenant, dataDir string) []collector.Collector {
 		&edgeCollector{tenant: tenant, logPath: edgePath},
 		&activityCollector{tenant: tenant},
 		&siteCollector{tenant: tenant},
+		// Family product runtimes (F1/F2 novel scores → DUO).
+		&dcoCollector{tenant: tenant},
+		&dsoCollector{tenant: tenant},
+		&dnoCollector{tenant: tenant},
+		&daoCollector{tenant: tenant, dataDir: dataDir},
+		&daopsCollector{tenant: tenant},
+		&dioCollector{tenant: tenant},
 	}
 }
 

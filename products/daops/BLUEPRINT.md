@@ -1,6 +1,6 @@
 # DAOPS — DevOps Observatory Blueprint
 
-**ADR:** 0650 · **Status:** scaffold · **Maturity target:** L2
+**ADR:** 0650 · **Status:** live · **Maturity target:** L2
 
 ![Context](./diagrams/daops-context.svg)
 

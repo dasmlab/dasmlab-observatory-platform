@@ -1,6 +1,6 @@
 # DNO — Network Observatory Blueprint
 
-**ADR:** 0200 · **Status:** scaffold · **Maturity target:** L1→L4 path
+**ADR:** 0200 · **Status:** live · **Maturity target:** L1→L4 path
 
 ![Context](./diagrams/dno-context.svg)
 

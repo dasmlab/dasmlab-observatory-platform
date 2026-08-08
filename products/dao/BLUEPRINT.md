@@ -1,6 +1,6 @@
 # DAO — AI Observatory Blueprint
 
-**ADR:** 0500 · **Status:** scaffold · **Maturity target:** L1→L2
+**ADR:** 0500 · **Status:** live · **Maturity target:** L1→L2
 
 ![Context](./diagrams/dao-context.svg)
 
