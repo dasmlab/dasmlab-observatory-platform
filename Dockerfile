@@ -15,13 +15,16 @@ WORKDIR /app
 COPY --from=builder /out/dpo-api /app/dpo-api
 COPY web /app/web
 COPY docs /app/docs
+COPY campaigns /app/campaigns
 RUN mkdir -p /data && chown -R 65532:65532 /app /data
 USER 65532
 ENV DPO_LISTEN=:8080 \
     DPO_DATA_DIR=/data \
     DPO_STATIC_DIR=/app/web \
     DPO_TENANT=dasmlab.org \
-    DAO_PROMPTS_PATH=/app/docs/PROMPTS.md
+    DAO_PROMPTS_PATH=/app/docs/PROMPTS.md \
+    DPO_CAMPAIGN_DIR=/app/campaigns \
+    DPO_LAUNCH_URL=https://dasmlab.org/launch
 EXPOSE 8080
 VOLUME ["/data"]
 ENTRYPOINT ["/app/dpo-api"]

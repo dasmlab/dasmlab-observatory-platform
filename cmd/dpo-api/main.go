@@ -10,6 +10,7 @@ import (
 	"context"
 
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/api"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/campaign"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/collectors"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/content"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/scheduler"
@@ -42,6 +43,7 @@ func main() {
 
 	engine := score.NewEngine(st, tenant)
 	spine := content.New(st, tenant)
+	camps := campaign.NewService(tenant, dataDir)
 	sched := scheduler.New(reg, st, engine)
 	sched.SetAfter(func(ctx context.Context) {
 		if err := spine.RefreshFromSitemap(ctx); err != nil {
@@ -61,6 +63,7 @@ func main() {
 		Engine:    engine,
 		Scheduler: sched,
 		Spine:     spine,
+		Campaigns: camps,
 		Tenant:    tenant,
 		Version:   version,
 		StaticDir: staticDir,

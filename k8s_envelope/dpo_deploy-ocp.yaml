@@ -146,6 +146,10 @@ spec:
               value: "sc-domain:dasmlab.org"
             - name: DPO_EDGE_LOG_PATH
               value: /data/edge/access.log
+            - name: DPO_LAUNCH_URL
+              value: "https://dasmlab.org/launch"
+            - name: DPO_CAMPAIGN_DIR
+              value: /app/campaigns
           volumeMounts:
             - name: data
               mountPath: /data

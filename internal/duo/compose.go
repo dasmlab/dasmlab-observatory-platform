@@ -135,10 +135,17 @@ func Recommend(tenant string, in Inputs, chain ImpactChain) observatory.Recommen
 		"Investigate %s.%s (score %.1f). Re-run collectors, confirm product API /api/v1/products/%s, then freeze a baseline.",
 		worstProduct, worstName, worstVal, worstProduct,
 	)
+	// Prefer campaign loop when presence is the weak story.
+	if worstProduct == "dpo" || worstName == "service_reachability" {
+		title = "Run dasmlab-2.0-launch dry-run, ship /launch, then baseline"
+		action = "Open Campaigns tab → Dry-run render for dasmlab-2.0-launch → verify channel previews → ship https://dasmlab.org/launch → freeze pre-launch/post-launch baselines → re-check DUO."
+	}
 	evidence := []string{
 		fmt.Sprintf("DPO overall=%.1f", in.DPOOverall),
 		fmt.Sprintf("Weakest signal %s.%s=%.1f", worstProduct, worstName, worstVal),
+		"Campaign dasmlab-2.0-launch (ADR-0402) — GET /api/v1/campaigns/dasmlab-2.0-launch",
 	}
+
 	// Add a second product evidence line.
 	for _, s := range chain.Sources {
 		if s.Product == worstProduct {

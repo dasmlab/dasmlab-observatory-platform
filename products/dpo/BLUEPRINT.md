@@ -18,6 +18,7 @@ AI Citation Velocity, Authority Growth, Topic Coverage, Knowledge Graph Density,
 |---------|--------------|---------------------|-------|
 | **Content spine + baseline diff** | Topic Coverage | What exists?, What changed?, Why did it change?, What should I do? | Sitemap path entities joined to Activity/GSC/edge; POST /baseline + GET /baseline/diff |
 | **Citation / crawl story** | AI Citation Velocity inputs | What exists?, What will happen?, What should I do? | Edge UA classes (Googlebot, GPTBot, ClaudeBot, …) + GEO prompt pack scaffold |
+| **Campaign orchestration** | Presence publish loop | What exists?, What changed?, What will happen?, What should I do? | ADR-0402 dry-run→arm→send; channel adapters; first campaign `dasmlab-2.0-launch` |
 
 ### Feature details
 
@@ -28,6 +29,10 @@ AI Citation Velocity, Authority Growth, Topic Coverage, Knowledge Graph Density,
 #### F2 — Citation / crawl story
 - **Chain role:** Feeds Research Citation Index and DUO presence line
 - **Acceptance:** See [USE-CASES.md](./USE-CASES.md)
+
+#### F3 — Campaign orchestration
+- **Chain role:** Creates measurable presence; feeds baselines + DUO
+- **Acceptance:** Dry-run renders all Wave-1 channels; `/launch` is web_slash artifact
 
 ## Dependencies
 

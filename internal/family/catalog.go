@@ -106,6 +106,12 @@ func Default() Catalog {
 						Proof:      "HAProxy UA bot classes (Googlebot, GPTBot, ClaudeBot, …) + GEO prompt pack scaffold",
 						ChainRole:  "Feeds Research Citation Index and DUO presence line",
 					},
+					{
+						ID: "dpo-f3", Name: "Campaign orchestration", NovelSignal: "Presence publish loop",
+						FiveQFocus: []string{"exists", "changed", "will happen", "should do"},
+						Proof:      "ADR-0402 dry-run→arm→send; channel adapters; content_published → baseline/DUO",
+						ChainRole:  "Creates measurable presence; first campaign dasmlab-2.0-launch",
+					},
 				},
 			},
 			{

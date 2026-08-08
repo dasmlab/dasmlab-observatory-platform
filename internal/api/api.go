@@ -14,6 +14,7 @@ import (
 	"github.com/go-chi/cors"
 
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/auth"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/campaign"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/content"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/duo"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/family"
@@ -30,6 +31,7 @@ type Deps struct {
 	Engine    *score.Engine
 	Scheduler *scheduler.Scheduler
 	Spine     *content.Spine
+	Campaigns *campaign.Service
 	Tenant    string
 	Version   string
 	StaticDir string
@@ -68,6 +70,13 @@ func (s *Server) Handler() http.Handler {
 		r.Post("/baseline", s.createBaseline)
 		r.Get("/baseline/diff", s.baselineDiff)
 		r.Post("/collect/run", s.runCollect)
+		r.Get("/channels", s.channels)
+		r.Get("/campaigns", s.campaignsList)
+		r.Post("/campaigns", s.campaignCreate)
+		r.Get("/campaigns/{id}", s.campaignOne)
+		r.Post("/campaigns/{id}/render", s.campaignRender)
+		r.Post("/campaigns/{id}/arm", s.campaignArm)
+		r.Post("/campaigns/{id}/send", s.campaignSend)
 	})
 
 	if s.d.StaticDir != "" {

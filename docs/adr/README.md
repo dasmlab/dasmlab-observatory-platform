@@ -24,6 +24,8 @@ Numbering is **platform-global**. Do not reuse these numbers in `dasmlab_home` (
 | [0200](./ADR-0200-network-observatory.md) | DNO — Network | Accepted (MVP blueprint) |
 | [0300](./ADR-0300-security-observatory.md) | DSO — Security | Accepted (MVP blueprint) |
 | [0400](./ADR-0400-digital-presence-observatory.md) | DPO — Digital Presence | Accepted (MVP scope) |
+| [0401](./ADR-0401-geo-ai-visibility.md) | DPO — GEO / AI visibility | Accepted (scaffold) |
+| [0402](./ADR-0402-campaign-orchestration.md) | DPO — Campaign orchestration | Accepted (F3) |
 | [0500](./ADR-0500-ai-observatory.md) | DAO — AI | Accepted (MVP blueprint) |
 | [0600](./ADR-0600-infrastructure-observatory.md) | DIO — Infrastructure | Accepted (MVP blueprint) |
 | [0650](./ADR-0650-devops-observatory.md) | DAOps — DevOps | Accepted (MVP blueprint) |

@@ -213,7 +213,107 @@ function duoView(impact, rec) {
   ]);
 }
 
-function render(tab, score, sources, meta, eng, content, baselines, fam, impact, rec) {
+function campaignsView(campaigns, channels) {
+  const list = campaigns || [];
+  const chans = channels || [];
+  return el("div", {}, [
+    el("h2", { class: "section-title", text: "Campaigns (DPO F3)" }),
+    el("p", {
+      class: "meta",
+      text: "Presence engineering — dry-run channel artifacts, then arm/send when credentials exist (ADR-0402).",
+    }),
+    el("h2", { class: "section-title", text: "Channels" }),
+    el(
+      "div",
+      { class: "sources" },
+      chans.map((c) =>
+        el("div", { class: "src" }, [
+          el("div", {}, [
+            el("strong", { text: c.name || c.id }),
+            el("div", { class: "meta", text: c.kind + " · limit " + c.char_limit + (c.setup_hint ? " — " + c.setup_hint : "") }),
+          ]),
+          el("span", {
+            class: "pill " + (c.live_status === "ready" ? "ok" : "muted"),
+            text: c.live_status,
+          }),
+        ])
+      )
+    ),
+    el("h2", { class: "section-title", text: "Campaigns" }),
+    el(
+      "div",
+      { class: "sources" },
+      list.length
+        ? list.map((camp) =>
+            el("div", { class: "src", style: "flex-direction:column;align-items:stretch;gap:0.5rem" }, [
+              el("div", { style: "display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap" }, [
+                el("div", {}, [
+                  el("strong", { text: camp.id }),
+                  el("div", { class: "meta", text: camp.title + " · " + camp.status }),
+                ]),
+                el("div", { class: "actions", style: "margin:0" }, [
+                  el("button", {
+                    text: "Dry-run render",
+                    onclick: async () => {
+                      await fetch("/api/v1/campaigns/" + camp.id + "/render", { method: "POST" });
+                      boot("campaigns");
+                    },
+                  }),
+                  el("button", {
+                    text: "Arm",
+                    onclick: async () => {
+                      await fetch("/api/v1/campaigns/" + camp.id + "/arm", { method: "POST" });
+                      boot("campaigns");
+                    },
+                  }),
+                  el("button", {
+                    text: "Send / manual receipts",
+                    onclick: async () => {
+                      await fetch("/api/v1/campaigns/" + camp.id + "/send", { method: "POST" });
+                      boot("campaigns");
+                    },
+                  }),
+                ]),
+              ]),
+              el(
+                "div",
+                { class: "comps" },
+                (camp.channels || [])
+                  .filter((ch) => (ch.artifacts || []).length)
+                  .map((ch) => {
+                    const art = ch.artifacts[0];
+                    return el("div", { class: "comp" }, [
+                      el("div", { class: "k", text: ch.channel_id + " (" + ch.status + ")" }),
+                      el("div", {
+                        class: "meta",
+                        text:
+                          (art.subject || art.title || "") +
+                          (art.over_limit ? " ⚠ over limit" : "") +
+                          " · " +
+                          art.char_count +
+                          "/" +
+                          art.char_limit,
+                      }),
+                      el("pre", {
+                        class: "meta",
+                        style: "white-space:pre-wrap;max-height:8rem;overflow:auto",
+                        text: art.body,
+                      }),
+                      el("button", {
+                        text: "Copy",
+                        onclick: () => navigator.clipboard.writeText(art.body),
+                      }),
+                    ]);
+                  })
+              ),
+            ])
+          )
+        : [el("p", { class: "meta", text: "No campaigns seeded." })]
+    ),
+  ]);
+}
+
+function render(tab, score, sources, meta, eng, content, baselines, fam, impact, rec, campaigns, channels) {
   const root = document.getElementById("app");
   root.innerHTML = "";
   const value = score?.value ?? 0;
@@ -229,6 +329,11 @@ function render(tab, score, sources, meta, eng, content, baselines, fam, impact,
       class: tab === "duo" ? "nav-btn active" : "nav-btn",
       text: "DUO",
       onclick: () => boot("duo"),
+    }),
+    el("button", {
+      class: tab === "campaigns" ? "nav-btn active" : "nav-btn",
+      text: "Campaigns",
+      onclick: () => boot("campaigns"),
     }),
     el("button", {
       class: tab === "executive" ? "nav-btn active" : "nav-btn",
@@ -247,6 +352,8 @@ function render(tab, score, sources, meta, eng, content, baselines, fam, impact,
     body = familyView(fam);
   } else if (tab === "duo") {
     body = duoView(impact, rec);
+  } else if (tab === "campaigns") {
+    body = campaignsView(campaigns, channels);
   } else if (tab === "engineering") {
     body = el("div", {}, [
       metricGrid("Bot / crawl", eng?.bots),
@@ -350,7 +457,7 @@ function render(tab, score, sources, meta, eng, content, baselines, fam, impact,
       el("button", {
         text: "Freeze baseline",
         onclick: async () => {
-          const label = prompt("Baseline label", "pre-home-2.0");
+          const label = prompt("Baseline label", "pre-launch");
           if (!label) return;
           await fetch("/api/v1/baseline", {
             method: "POST",
@@ -371,19 +478,22 @@ function render(tab, score, sources, meta, eng, content, baselines, fam, impact,
 }
 
 async function boot(tab = "family") {
-  const [score, sources, meta, eng, content, baselines, fam, impact, rec, productList] = await Promise.all([
-    getJSON("/api/v1/score"),
-    getJSON("/api/v1/sources/status"),
-    getJSON("/api/v1/meta"),
-    getJSON("/api/v1/engineering"),
-    getJSON("/api/v1/content"),
-    getJSON("/api/v1/baselines"),
-    getJSON("/api/v1/family"),
-    getJSON("/api/v1/duo/impact"),
-    getJSON("/api/v1/duo/recommend"),
-    getJSON("/api/v1/products").catch(() => []),
-  ]);
-  render(tab, score, sources, meta, eng, content, baselines, fam, impact, rec);
+  const [score, sources, meta, eng, content, baselines, fam, impact, rec, productList, campaigns, channels] =
+    await Promise.all([
+      getJSON("/api/v1/score"),
+      getJSON("/api/v1/sources/status"),
+      getJSON("/api/v1/meta"),
+      getJSON("/api/v1/engineering"),
+      getJSON("/api/v1/content"),
+      getJSON("/api/v1/baselines"),
+      getJSON("/api/v1/family"),
+      getJSON("/api/v1/duo/impact"),
+      getJSON("/api/v1/duo/recommend"),
+      getJSON("/api/v1/products").catch(() => []),
+      getJSON("/api/v1/campaigns").catch(() => []),
+      getJSON("/api/v1/channels").catch(() => []),
+    ]);
+  render(tab, score, sources, meta, eng, content, baselines, fam, impact, rec, campaigns, channels);
   if (tab === "family" && Array.isArray(productList)) {
     const by = Object.fromEntries(productList.map((p) => [p.code, p]));
     document.querySelectorAll("[data-product]").forEach((node) => {
