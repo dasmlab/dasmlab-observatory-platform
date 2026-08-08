@@ -163,7 +163,11 @@ jobs:
         continue-on-error: true
         run: |
           set -euo pipefail
-          for FQDN in dpo.dasmlab.org; do
+          # apps.* is what browsers hit today; vanity dpo.dasmlab.org is additive.
+          for FQDN in \
+            dpo-dasmlab.apps.2026-prod-1.ocp.dasmlab.org \
+            dpo.dasmlab.org
+          do
             bash scripts/ci/ensure-prod-cert.sh "${FQDN}" || true
           done
 
