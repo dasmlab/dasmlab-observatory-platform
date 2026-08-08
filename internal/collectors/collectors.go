@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	collector "github.com/lmcdasm/dasmlab-observatory-platform/platform/collector-sdk"
+	collector "github.com/dasmlab/dasmlab-observatory-platform/platform/collector-sdk"
 )
 
 // Default returns Phase-1 collectors. Live paths activate when env credentials / logs exist.

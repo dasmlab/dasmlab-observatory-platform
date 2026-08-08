@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	collector "github.com/lmcdasm/dasmlab-observatory-platform/platform/collector-sdk"
+	collector "github.com/dasmlab/dasmlab-observatory-platform/platform/collector-sdk"
 )
 
 // siteCollector probes website sitemap/robots for technical trust + freshness.

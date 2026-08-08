@@ -8,7 +8,7 @@ import (
 
 	_ "modernc.org/sqlite"
 
-	collector "github.com/lmcdasm/dasmlab-observatory-platform/platform/collector-sdk"
+	collector "github.com/dasmlab/dasmlab-observatory-platform/platform/collector-sdk"
 )
 
 type Store struct {

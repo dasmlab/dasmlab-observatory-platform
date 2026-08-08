@@ -47,7 +47,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: dpo
-          image: ghcr.io/lmcdasm/dpo:__VERSION__
+          image: ghcr.io/dasmlab/dpo:__VERSION__
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
@@ -82,7 +82,7 @@ spec:
                   key: GITHUB_TOKEN
                   optional: true
             - name: GITHUB_REPOS
-              value: "lmcdasm/dasmlab-observatory-platform,lmcdasm/cheapcloud,lmcdasm/dasmlab_home"
+              value: "dasmlab/dasmlab-observatory-platform,lmcdasm/cheapcloud,lmcdasm/dasmlab_home"
             - name: DPO_SITE_BASE
               value: "https://dasmlab.org"
             - name: DPO_ACTIVITY_URL

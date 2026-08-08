@@ -1,4 +1,4 @@
-module github.com/lmcdasm/dasmlab-observatory-platform/platform/graph-sdk
+module github.com/dasmlab/dasmlab-observatory-platform/platform/graph-sdk
 
 go 1.22.0
 

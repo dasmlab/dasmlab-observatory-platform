@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lmcdasm/dasmlab-observatory-platform/internal/store"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/store"
 )
 
 type Spine struct {

@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	collector "github.com/lmcdasm/dasmlab-observatory-platform/platform/collector-sdk"
+	collector "github.com/dasmlab/dasmlab-observatory-platform/platform/collector-sdk"
 )
 
 type githubCollector struct {
@@ -100,7 +100,7 @@ func (c *githubCollector) Normalize(ctx context.Context) ([]collector.Event, err
 func parseRepoAllowlist() []string {
 	raw := strings.TrimSpace(os.Getenv("GITHUB_REPOS"))
 	if raw == "" {
-		raw = "lmcdasm/dasmlab-observatory-platform,lmcdasm/cheapcloud,lmcdasm/dasmlab_home"
+		raw = "dasmlab/dasmlab-observatory-platform,lmcdasm/cheapcloud,lmcdasm/dasmlab_home"
 	}
 	var out []string
 	for _, p := range strings.Split(raw, ",") {

@@ -1,31 +1,61 @@
-name: DPO / Observatory Platform CI/CD (OCP GitOps)
+name: DPO / Observatory Platform CX Pipeline
 
 on:
   push:
-    branches: ["main", "2026-dop-v0"]
+    branches: ["**"]
   workflow_dispatch:
 
-jobs:
-  build-deploy:
-    permissions:
-      contents: read
-      packages: write
-    runs-on: [self-hosted]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+env:
+  RUNNER_LABEL: self-hosted
+  IMAGE_REPO: ghcr.io/dasmlab/dpo
 
-      - name: Setup metadata
+concurrency:
+  group: dpo-${{ github.ref == 'refs/heads/main' && 'prod' || format('preview-{0}', github.actor) }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  prepare:
+    runs-on: [self-hosted]
+    outputs:
+      version_tag: ${{ steps.meta.outputs.version_tag }}
+      is_prod: ${{ steps.meta.outputs.is_prod }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: meta
         run: |
           set -euo pipefail
           PKG_VER=$(grep -E '^version:' VERSION 2>/dev/null | awk '{print $2}' || true)
           if [ -z "${PKG_VER}" ] && [ -f VERSION ]; then PKG_VER=$(tr -d '[:space:]' < VERSION); fi
           if [ -z "${PKG_VER}" ]; then PKG_VER="0.1.0"; fi
           SHA=$(git rev-parse --short HEAD)
-          echo "VERSION_TAG=v${PKG_VER}-${SHA}" >> "$GITHUB_ENV"
-          echo "COMMIT_ID=${SHA}" >> "$GITHUB_ENV"
+          echo "version_tag=v${PKG_VER}-${SHA}" >> "$GITHUB_OUTPUT"
+          if [ "${GITHUB_REF}" = "refs/heads/main" ]; then
+            echo "is_prod=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_prod=false" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Resolve GHCR / deploy token
+  test:
+    needs: prepare
+    runs-on: [self-hosted]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+      - name: Go test
+        run: go test ./internal/... ./cmd/...
+
+  build-publish:
+    needs: [prepare, test]
+    runs-on: [self-hosted]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve GHCR token
         env:
           SECRET_PAT: ${{ secrets.DASMLAB_GHCR_PAT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -47,53 +77,126 @@ jobs:
             token="${GITHUB_TOKEN}"
           fi
           if [ -z "${token}" ]; then
-            echo "ERROR: GHCR/deploy token not set"
+            echo "ERROR: GHCR token not set"
             exit 1
           fi
           echo "::add-mask::${token}"
           echo "GHCR_TOKEN=${token}" >> "$GITHUB_ENV"
-          echo "DEPLOY_TOKEN=${token}" >> "$GITHUB_ENV"
 
-      - name: Build and push image
+      - name: Build image
+        env:
+          VERSION_TAG: ${{ needs.prepare.outputs.version_tag }}
         run: |
           set -euo pipefail
           export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}"
-          IMAGE="ghcr.io/lmcdasm/dpo:${VERSION_TAG}"
-          echo "${GHCR_TOKEN}" | buildah login --username lmcdasm --password-stdin ghcr.io
-
-          export BUILDAH_ISOLATION=chroot
-          export STORAGE_DRIVER=vfs
-          export BUILDAH_RUNROOT="/tmp/buildah-runroot-dpo-${GITHUB_RUN_ID:-$$}"
-          export BUILDAH_GRAPHROOT="/tmp/buildah-graphroot-dpo-${GITHUB_RUN_ID:-$$}"
-          mkdir -p "${BUILDAH_RUNROOT}" "${BUILDAH_GRAPHROOT}"
-          export CONTAINERS_STORAGE_CONF="/tmp/containers-storage-dpo-${GITHUB_RUN_ID:-$$}.conf"
-          printf '%s\n' \
-            '[storage]' \
-            'driver = "vfs"' \
-            "runroot = \"${BUILDAH_RUNROOT}\"" \
-            "graphroot = \"${BUILDAH_GRAPHROOT}\"" \
-            > "${CONTAINERS_STORAGE_CONF}"
-
-          buildah bud --format docker -t "${IMAGE}" -f Dockerfile .
-          buildah push "${IMAGE}"
+          IMAGE="${IMAGE_REPO}:${VERSION_TAG}"
+          if command -v buildah >/dev/null 2>&1; then
+            export BUILDAH_ISOLATION=chroot
+            export STORAGE_DRIVER=vfs
+            export BUILDAH_RUNROOT="/tmp/buildah-runroot-dpo-${GITHUB_RUN_ID:-$$}"
+            export BUILDAH_GRAPHROOT="/tmp/buildah-graphroot-dpo-${GITHUB_RUN_ID:-$$}"
+            mkdir -p "${BUILDAH_RUNROOT}" "${BUILDAH_GRAPHROOT}"
+            export CONTAINERS_STORAGE_CONF="/tmp/containers-storage-dpo-${GITHUB_RUN_ID:-$$}.conf"
+            printf '%s\n' \
+              '[storage]' \
+              'driver = "vfs"' \
+              "runroot = \"${BUILDAH_RUNROOT}\"" \
+              "graphroot = \"${BUILDAH_GRAPHROOT}\"" \
+              > "${CONTAINERS_STORAGE_CONF}"
+            buildah bud --format docker -t "${IMAGE}" -f Dockerfile .
+          else
+            docker build -t "${IMAGE}" -f Dockerfile .
+          fi
           echo "IMAGE=${IMAGE}" >> "$GITHUB_ENV"
 
-      - name: Ensure HAProxy CERT for DPO FQDNs
-        if: success()
+      - name: Push image
+        env:
+          VERSION_TAG: ${{ needs.prepare.outputs.version_tag }}
+        run: |
+          set -euo pipefail
+          IMAGE="${IMAGE_REPO}:${VERSION_TAG}"
+          echo "${GHCR_TOKEN}" | docker login ghcr.io -u dasmlab --password-stdin || true
+          echo "${GHCR_TOKEN}" | buildah login --username dasmlab --password-stdin ghcr.io || true
+          if command -v buildah >/dev/null 2>&1 && ! docker image inspect "${IMAGE}" >/dev/null 2>&1; then
+            buildah push "${IMAGE}"
+          else
+            docker push "${IMAGE}"
+          fi
+
+      - name: Smoke test
+        env:
+          VERSION_TAG: ${{ needs.prepare.outputs.version_tag }}
+        run: |
+          set -euo pipefail
+          IMAGE="${IMAGE_REPO}:${VERSION_TAG}"
+          cid="dpo-smoke-${GITHUB_SHA::8}"
+          docker rm -f "${cid}" 2>/dev/null || true
+          docker pull "${IMAGE}" 2>/dev/null || true
+          docker run -d --name "${cid}" -e DPO_DATA_DIR=/tmp/data "${IMAGE}"
+          trap 'docker rm -f "${cid}" 2>/dev/null || true' EXIT
+          ip=""
+          for _ in $(seq 1 30); do
+            ip="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "${cid}" 2>/dev/null || true)"
+            if [ -n "${ip}" ]; then
+              break
+            fi
+            sleep 1
+          done
+          if [ -z "${ip}" ]; then
+            echo "ERROR: no container IP"
+            docker logs "${cid}" || true
+            exit 1
+          fi
+          echo "smoke via http://${ip}:8080"
+          for _ in $(seq 1 40); do
+            if curl -fsS "http://${ip}:8080/healthz" >/dev/null 2>&1; then
+              curl -fsS "http://${ip}:8080/healthz"
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs "${cid}" || true
+          exit 1
+
+      - name: Ensure HAProxy CERT for DPO FQDN
+        if: success() && needs.prepare.outputs.is_prod == 'true'
         continue-on-error: true
         run: |
           set -euo pipefail
-          # Vanity / edge hosts (HAProxy + Let's Encrypt). OCP apps.* routes use
-          # the cluster router wildcard and do not need CERT* entries here.
           for FQDN in dpo.dasmlab.org; do
             bash scripts/ci/ensure-prod-cert.sh "${FQDN}" || true
           done
-          # Dev / preview hosts (when present): same script family as home/interview-me.
-          # Example: bash scripts/ci/ensure-preview-cert.sh "dev-${GITHUB_ACTOR}-dpo.apps...."
 
-      - name: GitOps publish to dasmlab-live-cicd
+  gitops-deploy:
+    needs: [prepare, build-publish]
+    if: success() && needs.prepare.outputs.is_prod == 'true'
+    runs-on: [self-hosted]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: GitOps sync
+        env:
+          VERSION_TAG: ${{ needs.prepare.outputs.version_tag }}
+          SECRET_PAT: ${{ secrets.DASMLAB_GHCR_PAT }}
         run: |
           set -euo pipefail
+          DEPLOY_TOKEN=""
+          if [ -f "/home/dasm/gh_token" ]; then
+            DEPLOY_TOKEN="$(tr -d '\n\r' < /home/dasm/gh_token)"
+          fi
+          if [ -z "${DEPLOY_TOKEN}" ] && [ -n "${SECRET_PAT:-}" ]; then
+            DEPLOY_TOKEN="${SECRET_PAT}"
+          fi
+          if [ -z "${DEPLOY_TOKEN}" ] && [ -f "/home/dasm/gh-pat" ]; then
+            # shellcheck disable=SC1091
+            source /home/dasm/gh-pat
+            DEPLOY_TOKEN="${DASMLAB_GHCR_PAT:-${GH_TOKEN:-}}"
+          fi
+          if [ -z "${DEPLOY_TOKEN}" ]; then
+            echo "ERROR: deploy token not set"
+            exit 1
+          fi
+
           MANIFEST_SOURCE="k8s_envelope/dpo_deploy-ocp.yaml"
           declare -A ROUTE_HOSTS=(
             ["2026-prod-1"]="dpo-dasmlab.apps.2026-prod-1.ocp.dasmlab.org"
@@ -120,7 +223,6 @@ jobs:
             cp "generated-${CLUSTER_NAME}.yaml" "${DEPLOY_DIR}/dpo-${VERSION_TAG}.yaml"
           done
 
-          # Keep Argo Application definition in sync on prod-1
           mkdir -p dasmlab-live-cicd/clusters/2026-prod-1/argocd/applications
           cp deploy/argocd/dpo-2026-prod-1.yaml \
             dasmlab-live-cicd/clusters/2026-prod-1/argocd/applications/dpo.yaml

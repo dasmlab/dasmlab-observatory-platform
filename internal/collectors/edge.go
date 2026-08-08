@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	collector "github.com/lmcdasm/dasmlab-observatory-platform/platform/collector-sdk"
+	collector "github.com/dasmlab/dasmlab-observatory-platform/platform/collector-sdk"
 )
 
 // 2026 crawl / AI bot UA tokens (first-party edge log analysis).

@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	collector "github.com/lmcdasm/dasmlab-observatory-platform/platform/collector-sdk"
+	collector "github.com/dasmlab/dasmlab-observatory-platform/platform/collector-sdk"
 )
 
 // activityCollector pulls Surfing Activity via machine token, or falls back to demo.

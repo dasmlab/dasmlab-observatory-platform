@@ -9,13 +9,13 @@ import (
 
 	"context"
 
-	"github.com/lmcdasm/dasmlab-observatory-platform/internal/api"
-	"github.com/lmcdasm/dasmlab-observatory-platform/internal/collectors"
-	"github.com/lmcdasm/dasmlab-observatory-platform/internal/content"
-	"github.com/lmcdasm/dasmlab-observatory-platform/internal/scheduler"
-	"github.com/lmcdasm/dasmlab-observatory-platform/internal/score"
-	"github.com/lmcdasm/dasmlab-observatory-platform/internal/store"
-	collector "github.com/lmcdasm/dasmlab-observatory-platform/platform/collector-sdk"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/api"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/collectors"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/content"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/scheduler"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/score"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/store"
+	collector "github.com/dasmlab/dasmlab-observatory-platform/platform/collector-sdk"
 )
 
 func main() {

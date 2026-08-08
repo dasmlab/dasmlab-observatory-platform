@@ -6,7 +6,7 @@
 |--|--|
 | Branch | `2026-dop-v0` (also builds from `main`) |
 | First product | **DPO** — Digital Presence Observatory |
-| Image | `ghcr.io/lmcdasm/dpo` |
+| Image | `ghcr.io/dasmlab/dpo` |
 | Route (prod-1) | https://dpo-dasmlab.apps.2026-prod-1.ocp.dasmlab.org |
 | GitOps | `lmcdasm/dasmlab-live-cicd` → `clusters/*/dpo/live` |
 | Argo CD | Application `dpo` in `openshift-gitops` |
@@ -29,8 +29,8 @@ DPO_STATIC_DIR=./web DPO_DATA_DIR=./.data ./bin/dpo-api
 
 ## Deploy flow
 
-1. Push to `main` or `2026-dop-v0` → GitHub Actions (self-hosted) builds with buildah, pushes GHCR.
-2. CI writes rendered manifest into `dasmlab-live-cicd` `clusters/<cluster>/dpo/live/dpo-v*.yaml`.
+1. Push to `main` → GitHub Actions on **dasmlab org self-hosted runner** (buildah → `ghcr.io/dasmlab/dpo`).
+2. `gitops-deploy` writes rendered manifest into `dasmlab-live-cicd` `clusters/<cluster>/dpo/live/dpo-v*.yaml`.
 3. Argo CD Application `dpo` auto-syncs namespace `dpo-system`.
 
 Bootstrap Argo (once per cluster):

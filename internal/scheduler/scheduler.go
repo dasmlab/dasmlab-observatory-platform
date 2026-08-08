@@ -5,9 +5,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/lmcdasm/dasmlab-observatory-platform/internal/score"
-	"github.com/lmcdasm/dasmlab-observatory-platform/internal/store"
-	collector "github.com/lmcdasm/dasmlab-observatory-platform/platform/collector-sdk"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/score"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/store"
+	collector "github.com/dasmlab/dasmlab-observatory-platform/platform/collector-sdk"
 )
 
 type Scheduler struct {

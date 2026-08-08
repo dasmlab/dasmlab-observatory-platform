@@ -13,12 +13,12 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 
-	"github.com/lmcdasm/dasmlab-observatory-platform/internal/auth"
-	"github.com/lmcdasm/dasmlab-observatory-platform/internal/content"
-	"github.com/lmcdasm/dasmlab-observatory-platform/internal/scheduler"
-	"github.com/lmcdasm/dasmlab-observatory-platform/internal/score"
-	"github.com/lmcdasm/dasmlab-observatory-platform/internal/store"
-	collector "github.com/lmcdasm/dasmlab-observatory-platform/platform/collector-sdk"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/auth"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/content"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/scheduler"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/score"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/store"
+	collector "github.com/dasmlab/dasmlab-observatory-platform/platform/collector-sdk"
 )
 
 type Deps struct {

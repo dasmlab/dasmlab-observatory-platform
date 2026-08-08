@@ -4,7 +4,7 @@ import (
 	"math"
 	"time"
 
-	"github.com/lmcdasm/dasmlab-observatory-platform/internal/store"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/store"
 )
 
 // Weights locked in ADR-0400 (GEO neutral 50 until P2).
