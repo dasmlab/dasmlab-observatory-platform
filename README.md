@@ -4,9 +4,11 @@
 
 | | |
 |--|--|
-| Branch | `2026-dop-v0` (also builds from `main`) |
+| Branch | `main` (feature branches build; prod GitOps on `main` only) |
 | First product | **DPO** — Digital Presence Observatory |
+| Org / repo | [`dasmlab/dasmlab-observatory-platform`](https://github.com/dasmlab/dasmlab-observatory-platform) |
 | Image | `ghcr.io/dasmlab/dpo` |
+| Runner | Org shared self-hosted (`self-hosted` / `bld-249-runner`) |
 | Route (prod-1) | https://dpo-dasmlab.apps.2026-prod-1.ocp.dasmlab.org |
 | GitOps | `lmcdasm/dasmlab-live-cicd` → `clusters/*/dpo/live` |
 | Argo CD | Application `dpo` in `openshift-gitops` |
