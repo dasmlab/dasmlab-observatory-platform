@@ -1,6 +1,6 @@
 # ADR-0300 — DSO — Security Observatory (Stub)
 
-**Status:** Stub  
+**Status:** Accepted (MVP blueprint)  
 **Date:** 2026-08-07  
 **Depends on:** ADR-0001, 0002, 9999
 
@@ -19,3 +19,8 @@ L2–L3 correlation of vulns × exposure × change velocity.
 ## Next
 
 Full ADR post DPO P1; align with future DASMLAB security tooling.
+
+## Blueprint
+
+Implementation-ready product blueprint: see `products/` matching this ADR (BLUEPRINT.md + USE-CASES.md + diagrams).
+

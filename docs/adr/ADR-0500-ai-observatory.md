@@ -1,6 +1,6 @@
 # ADR-0500 — DAO — AI Observatory (Stub)
 
-**Status:** Stub  
+**Status:** Accepted (MVP blueprint)  
 **Date:** 2026-08-07  
 **Depends on:** ADR-0001, 0002, 0006, 9999
 
@@ -19,3 +19,8 @@ Prompt execution plumbing and AI SDK may be shared; product scores and tenants d
 ## Next
 
 Full ADR after DPO Phase 2 AI collectors prove the SDK.
+
+## Blueprint
+
+Implementation-ready product blueprint: see `products/` matching this ADR (BLUEPRINT.md + USE-CASES.md + diagrams).
+

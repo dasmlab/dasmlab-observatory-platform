@@ -14,8 +14,9 @@ import (
 	"github.com/go-chi/cors"
 
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/auth"
-	"github.com/dasmlab/dasmlab-observatory-platform/internal/family"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/content"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/duo"
+	"github.com/dasmlab/dasmlab-observatory-platform/internal/family"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/scheduler"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/score"
 	"github.com/dasmlab/dasmlab-observatory-platform/internal/store"
@@ -56,6 +57,8 @@ func (s *Server) Handler() http.Handler {
 		r.Get("/sources/status", s.sources)
 		r.Get("/meta", s.meta)
 		r.Get("/family", s.family)
+		r.Get("/duo/impact", s.duoImpact)
+		r.Get("/duo/recommend", s.duoRecommend)
 		r.Get("/engineering", s.engineering)
 		r.Get("/content", s.content)
 		r.Get("/baselines", s.listBaselines)
@@ -86,6 +89,24 @@ func (s *Server) family(w http.ResponseWriter, _ *http.Request) {
 	c := family.Default()
 	c.ActiveProduct = "dpo"
 	writeJSON(w, http.StatusOK, c)
+}
+
+func (s *Server) duoImpact(w http.ResponseWriter, _ *http.Request) {
+	overall := 55.0
+	live := false
+	if snap, err := s.d.Store.LatestScore(s.d.Tenant, "overall"); err == nil && snap != nil {
+		overall = snap.Value
+		live = true
+	}
+	writeJSON(w, http.StatusOK, duo.Compose(s.d.Tenant, overall, live))
+}
+
+func (s *Server) duoRecommend(w http.ResponseWriter, _ *http.Request) {
+	overall := 55.0
+	if snap, err := s.d.Store.LatestScore(s.d.Tenant, "overall"); err == nil && snap != nil {
+		overall = snap.Value
+	}
+	writeJSON(w, http.StatusOK, duo.Recommend(s.d.Tenant, overall))
 }
 
 func (s *Server) meta(w http.ResponseWriter, _ *http.Request) {

@@ -1,6 +1,6 @@
 # ADR-0650 — DAOps — DevOps Observatory (Stub)
 
-**Status:** Stub  
+**Status:** Accepted (MVP blueprint)  
 **Date:** 2026-08-07  
 **Depends on:** ADR-0001, 0002, 9999
 
@@ -15,3 +15,8 @@ Deployment Confidence, Recovery Confidence, Pipeline Fragility, Review Latency D
 ## Next
 
 Full ADR after DCO stub expands; avoid duplicating DCO—DAOps focuses on delivery systems, DCO on runtime cloud.
+
+## Blueprint
+
+Implementation-ready product blueprint: see `products/` matching this ADR (BLUEPRINT.md + USE-CASES.md + diagrams).
+

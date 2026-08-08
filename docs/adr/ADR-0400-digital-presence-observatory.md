@@ -118,3 +118,8 @@ Interim: implement under `products/dpo` in this monorepo **or** `/home/dasm/digi
 - [ADR-0002](./ADR-0002-common-reference-architecture.md)
 - [ADR-0003](./ADR-0003-collector-sdk.md)
 - Home: `docs/ADR-001-CDN-MGR-GEO-ENGAGEMENT.md`, `docs/DEMO-VISITOR-CONTRACT.md`
+
+## Blueprint
+
+See [products/dpo/BLUEPRINT.md](../../products/dpo/BLUEPRINT.md).
+

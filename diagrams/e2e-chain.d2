@@ -1,0 +1,33 @@
+direction: right
+
+home: "dasmlab_home hubs"
+edge: "HAProxy edge"
+surf: "Surfing Activity"
+dpo: "DPO presence"
+dco: "DCO cloud"
+dso: "DSO security"
+dno: "DNO network"
+dao: "DAO AI systems"
+daops: "DAOps delivery"
+dio: "DIO infra"
+duo: "DUO executive"
+research: "Research flywheel"
+
+home -> edge
+home -> surf
+edge -> dpo
+surf -> dpo
+home -> dpo
+dpo -> research
+research -> dpo
+dno -> dco
+dio -> dco
+daops -> dco
+dco -> dso
+dao -> dpo
+dpo -> duo
+dco -> duo
+dso -> duo
+dno -> duo
+dao -> duo
+daops -> duo

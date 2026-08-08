@@ -67,13 +67,17 @@ function familyView(fam) {
       class: "meta",
       text: fam?.differentiator || "Discover things nobody measures today.",
     }),
+    el("p", {
+      class: "meta",
+      text: "Five questions: " + (fam?.five_questions || []).join(" → "),
+    }),
     el("h2", { class: "section-title", text: "Innovation gate" }),
     el(
       "div",
       { class: "comps" },
       (fam?.innovation_gate || []).map((g) => el("div", { class: "comp" }, [el("div", { class: "k", text: g })]))
     ),
-    el("h2", { class: "section-title", text: "Products" }),
+    el("h2", { class: "section-title", text: "Products + existence proofs" }),
     el(
       "div",
       { class: "family-grid" },
@@ -84,9 +88,19 @@ function familyView(fam) {
             el("span", { class: "pill " + (p.status === "live" ? "ok" : "muted"), text: p.status }),
           ]),
           el("div", { class: "fam-name", text: p.name }),
-          el("div", { class: "meta", text: "ADR-" + p.adr }),
+          el("div", { class: "meta", text: "ADR-" + p.adr + (p.blueprint ? " · " + p.blueprint : "") }),
           el("div", { class: "meta", text: "Not: " + (p.commodity_avoid || []).join(", ") }),
-          el("div", { class: "fam-scores", text: (p.novel_scores || []).join(" · ") }),
+          el(
+            "ul",
+            { class: "fam-features" },
+            (p.features || []).map((f) =>
+              el("li", {}, [
+                el("strong", { text: f.name }),
+                el("div", { class: "meta", text: f.novel_signal + " — " + (f.proof || "") }),
+              ])
+            )
+          ),
+          el("div", { class: "fam-scores", text: (p.novel_scores || []).slice(0, 4).join(" · ") }),
         ])
       )
     ),
@@ -112,7 +126,61 @@ function familyView(fam) {
   ]);
 }
 
-function render(tab, score, sources, meta, eng, content, baselines, fam) {
+function duoView(impact, rec) {
+  const layers = [
+    ["business", impact?.business],
+    ["engineering", impact?.engineering],
+    ["operational", impact?.operational],
+  ];
+  return el("div", {}, [
+    el("h2", { class: "section-title", text: "DUO — impact chain" }),
+    el("p", { class: "meta", text: "Business → Engineering → Operational — not aggregated dashboards." }),
+    el(
+      "div",
+      { class: "comps" },
+      layers.map(([k, L]) =>
+        el("div", { class: "comp" }, [
+          el("div", { class: "k", text: L?.label || k }),
+          el("div", { class: "v", text: L?.score != null ? String(L.score) : "—" }),
+          el("div", { class: "meta", text: L?.summary || "" }),
+        ])
+      )
+    ),
+    el("h2", { class: "section-title", text: "Recommended action" }),
+    rec
+      ? el("div", { class: "src" }, [
+          el("div", {}, [
+            el("strong", { text: rec.title || "Action" }),
+            el("div", { class: "meta", text: rec.action || "" }),
+            el("div", {
+              class: "meta",
+              text:
+                "confidence " +
+                (rec.confidence != null ? Math.round(rec.confidence * 100) + "%" : "—") +
+                " · effort " +
+                (rec.estimated_effort || "—") +
+                " · " +
+                (rec.expected_impact || ""),
+            }),
+            el("div", { class: "fam-scores", text: (rec.evidence || []).join(" · ") }),
+          ]),
+        ])
+      : el("p", { class: "meta", text: "No recommendation yet." }),
+    el("h2", { class: "section-title", text: "Source scores" }),
+    el(
+      "div",
+      { class: "sources" },
+      (impact?.sources || []).map((s) =>
+        el("div", { class: "src" }, [
+          el("strong", { text: s.product + "." + s.name }),
+          el("span", { class: "pill " + (s.mode === "live" ? "ok" : "muted"), text: s.mode + " " + s.value }),
+        ])
+      )
+    ),
+  ]);
+}
+
+function render(tab, score, sources, meta, eng, content, baselines, fam, impact, rec) {
   const root = document.getElementById("app");
   root.innerHTML = "";
   const value = score?.value ?? 0;
@@ -123,6 +191,11 @@ function render(tab, score, sources, meta, eng, content, baselines, fam) {
       class: tab === "family" ? "nav-btn active" : "nav-btn",
       text: "Family",
       onclick: () => boot("family"),
+    }),
+    el("button", {
+      class: tab === "duo" ? "nav-btn active" : "nav-btn",
+      text: "DUO",
+      onclick: () => boot("duo"),
     }),
     el("button", {
       class: tab === "executive" ? "nav-btn active" : "nav-btn",
@@ -139,6 +212,8 @@ function render(tab, score, sources, meta, eng, content, baselines, fam) {
   let body;
   if (tab === "family") {
     body = familyView(fam);
+  } else if (tab === "duo") {
+    body = duoView(impact, rec);
   } else if (tab === "engineering") {
     body = el("div", {}, [
       metricGrid("Bot / crawl", eng?.bots),
@@ -263,7 +338,7 @@ function render(tab, score, sources, meta, eng, content, baselines, fam) {
 }
 
 async function boot(tab = "family") {
-  const [score, sources, meta, eng, content, baselines, fam] = await Promise.all([
+  const [score, sources, meta, eng, content, baselines, fam, impact, rec] = await Promise.all([
     getJSON("/api/v1/score"),
     getJSON("/api/v1/sources/status"),
     getJSON("/api/v1/meta"),
@@ -271,8 +346,10 @@ async function boot(tab = "family") {
     getJSON("/api/v1/content"),
     getJSON("/api/v1/baselines"),
     getJSON("/api/v1/family"),
+    getJSON("/api/v1/duo/impact"),
+    getJSON("/api/v1/duo/recommend"),
   ]);
-  render(tab, score, sources, meta, eng, content, baselines, fam);
+  render(tab, score, sources, meta, eng, content, baselines, fam, impact, rec);
 }
 
 boot().catch((e) => {

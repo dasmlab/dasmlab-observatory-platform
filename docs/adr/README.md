@@ -20,14 +20,14 @@ Numbering is **platform-global**. Do not reuse these numbers in `dasmlab_home` (
 
 | ADR | Product | Status |
 |-----|---------|--------|
-| [0100](./ADR-0100-cloud-observatory.md) | DCO — Cloud | Stub |
-| [0200](./ADR-0200-network-observatory.md) | DNO — Network | Stub |
-| [0300](./ADR-0300-security-observatory.md) | DSO — Security | Stub |
+| [0100](./ADR-0100-cloud-observatory.md) | DCO — Cloud | Accepted (MVP blueprint) |
+| [0200](./ADR-0200-network-observatory.md) | DNO — Network | Accepted (MVP blueprint) |
+| [0300](./ADR-0300-security-observatory.md) | DSO — Security | Accepted (MVP blueprint) |
 | [0400](./ADR-0400-digital-presence-observatory.md) | DPO — Digital Presence | Accepted (MVP scope) |
-| [0500](./ADR-0500-ai-observatory.md) | DAO — AI | Stub |
-| [0600](./ADR-0600-infrastructure-observatory.md) | DIO — Infrastructure | Stub |
-| [0650](./ADR-0650-devops-observatory.md) | DAOps — DevOps | Stub |
-| [0700](./ADR-0700-unified-observatory.md) | DUO — Unified | Stub |
+| [0500](./ADR-0500-ai-observatory.md) | DAO — AI | Accepted (MVP blueprint) |
+| [0600](./ADR-0600-infrastructure-observatory.md) | DIO — Infrastructure | Accepted (MVP blueprint) |
+| [0650](./ADR-0650-devops-observatory.md) | DAOps — DevOps | Accepted (MVP blueprint) |
+| [0700](./ADR-0700-unified-observatory.md) | DUO — Unified | Accepted (MVP blueprint) |
 
 ## How agents should consume ADRs
 

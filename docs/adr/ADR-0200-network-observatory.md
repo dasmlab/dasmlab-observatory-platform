@@ -1,6 +1,6 @@
 # ADR-0200 — DNO — Network Observatory (Stub)
 
-**Status:** Stub  
+**Status:** Accepted (MVP blueprint)  
 **Date:** 2026-08-07  
 **Depends on:** ADR-0001, 0002, 9999
 
@@ -19,3 +19,8 @@ L1 observe → L4 predict for path failures.
 ## Next
 
 Full ADR after shared collector + graph SDKs exist.
+
+## Blueprint
+
+Implementation-ready product blueprint: see `products/` matching this ADR (BLUEPRINT.md + USE-CASES.md + diagrams).
+

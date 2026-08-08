@@ -1,6 +1,6 @@
 # ADR-0700 — DUO — Unified Observatory (Stub)
 
-**Status:** Stub  
+**Status:** Accepted (MVP blueprint)  
 **Date:** 2026-08-07  
 **Depends on:** ADR-0001, 0002, 0005, 0006, 9999
 
@@ -21,3 +21,8 @@ Being a generic Grafana folder of panels.
 ## Next
 
 Full ADR after DPO P1 scores are stable and at least one other observatory emits Overall Health.
+
+## Blueprint
+
+Implementation-ready product blueprint: see `products/` matching this ADR (BLUEPRINT.md + USE-CASES.md + diagrams).
+

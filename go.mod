@@ -6,6 +6,7 @@ require (
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/cors v1.2.1
 	github.com/dasmlab/dasmlab-observatory-platform/platform/collector-sdk v0.0.0
+	github.com/dasmlab/dasmlab-observatory-platform/platform/observatory-sdk v0.0.0
 	golang.org/x/oauth2 v0.36.0
 	modernc.org/sqlite v1.33.1
 )
@@ -28,3 +29,5 @@ require (
 )
 
 replace github.com/dasmlab/dasmlab-observatory-platform/platform/collector-sdk => ./platform/collector-sdk
+
+replace github.com/dasmlab/dasmlab-observatory-platform/platform/observatory-sdk => ./platform/observatory-sdk

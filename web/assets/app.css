@@ -167,6 +167,8 @@ button:hover { background: color-mix(in srgb, var(--accent) 30%, transparent); }
 .fam-head { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
 .fam-name { margin: 0.35rem 0; font-weight: 600; }
 .fam-scores { margin-top: 0.5rem; font-size: 0.82rem; color: var(--accent); line-height: 1.35; }
+.fam-features { margin: 0.5rem 0 0; padding-left: 1.1rem; font-size: 0.85rem; }
+.fam-features li { margin-bottom: 0.35rem; }
 
 @keyframes rise {
   from { opacity: 0; transform: translateY(10px); }

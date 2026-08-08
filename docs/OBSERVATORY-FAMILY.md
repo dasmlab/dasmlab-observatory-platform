@@ -14,14 +14,14 @@ Live machine-readable catalog: `GET /api/v1/family` (served from the DPO runtime
 
 | Code | Product | ADR | Status | Instead of commodity… |
 |------|---------|-----|--------|------------------------|
-| DPO | Digital Presence | 0400 | **Live** (track-home) | Citation Velocity, Topic Coverage, Engineering Trust, … |
-| DCO | Cloud | 0100 | Scaffold | Operational Complexity, Deployment Confidence, … |
-| DSO | Security | 0300 | Scaffold | Attack Surface Evolution, Risk Momentum, … |
-| DAO | AI | 0500 | Scaffold | Model Drift, AI Trust Score, … |
-| DNO | Network | 0200 | Scaffold | Path Stability, Intent Compliance, … |
-| DIO | Infrastructure | 0600 | Scaffold | Capacity Confidence, Failover Readiness, … |
-| DAOps | DevOps | 0650 | Scaffold | Delivery Confidence, Developer Experience Index, … |
-| DUO | Unified | 0700 | Scaffold | Executive understanding + recommended actions |
+| DPO | Digital Presence | 0400 | **Live** + blueprint | Citation Velocity, Topic Coverage, Engineering Trust, … |
+| DCO | Cloud | 0100 | Blueprint + scaffold scores | Operational Complexity, Deployment Confidence, … |
+| DSO | Security | 0300 | Blueprint + scaffold scores | Attack Surface Evolution, Risk Momentum, … |
+| DAO | AI | 0500 | Blueprint + scaffold scores | Model Drift, AI Trust Score, … |
+| DNO | Network | 0200 | Blueprint + scaffold scores | Path Stability, Intent Compliance, … |
+| DIO | Infrastructure | 0600 | Blueprint + scaffold scores | Capacity Confidence, Failover Readiness, … |
+| DAOps | DevOps | 0650 | Blueprint + scaffold scores | Delivery Confidence, Developer Experience Index, … |
+| DUO | Unified | 0700 | Blueprint + compose API | Executive understanding + recommended actions |
 
 ## Architecture (identical per observatory)
 

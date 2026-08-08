@@ -15,6 +15,8 @@ Engineering platforms that make complex systems **observable, understandable, au
 
 ## Start here
 
+0. [Plans index](./docs/plans/README.md) — E2E story + parallel DXX blueprints
+
 1. [Observatory family](./docs/OBSERVATORY-FAMILY.md) — products, differentiators, layout
 2. [Novel scores](./docs/SCORES.md) — what we measure instead of commodity metrics
 3. [Engineering Principles](./docs/standards/ENGINEERING-PRINCIPLES.md)
