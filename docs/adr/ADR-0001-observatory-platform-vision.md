@@ -17,9 +17,9 @@ Comparable patterns: VMware vSphere, HashiCorp, Grafana Labs, Red Hat OpenShift,
 
 **DASMLAB Observatory Platform (DOP)** is the root. All observatories inherit shared architecture, SDKs, event model, identity, analytics, and UI shell.
 
-### 2. Company vision
+### 2. Vision
 
-Technologies DASMLAB Inc. develops engineering platforms that make complex systems **observable, understandable, automatable, and ultimately self-improving**.
+Engineering platforms that make complex systems **observable, understandable, automatable, and ultimately self-improving**. DOP is the Digital Observatory / observability root those platforms share.
 
 ### 3. Platform mission
 

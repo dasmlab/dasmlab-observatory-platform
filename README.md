@@ -1,6 +1,6 @@
 # DASMLAB Observatory Platform (DOP)
 
-**Technologies DASMLAB Inc.** — engineering platforms that make complex systems observable, understandable, automatable, and ultimately self-improving.
+Engineering platforms that make complex systems **observable, understandable, automatable, and ultimately self-improving** — a Digital Observatory / observability family, not a pile of isolated dashboards.
 
 | | |
 |--|--|

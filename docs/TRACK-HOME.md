@@ -1,6 +1,6 @@
 # Track home improvements with DPO
 
-Technologies DASMLAB Inc. builds observatories the same way it explores technology: hands-on, trend-aware, legacy versus future. **DPO** is the mirror for `dasmlab_home` — the Engineering Knowledge Network.
+Observatories are built the same way we explore technology: hands-on, trend-aware, legacy versus future. **DPO** is the Digital Presence product on the Observatory Platform — the mirror for `dasmlab_home` (Engineering Knowledge Network).
 
 ## Loop
 

@@ -1,6 +1,6 @@
 # Observatory family (DOP) roadmap
 
-Technologies DASMLAB Inc. ships observatories as a **family**, not isolated apps.
+Ship observatories as a **family** — one Digital Observatory / observability platform — not isolated apps.
 
 | Code | Product | ADR | Status |
 |------|---------|-----|--------|
