@@ -17,6 +17,8 @@ Comparable patterns: VMware vSphere, HashiCorp, Grafana Labs, Red Hat OpenShift,
 
 **DASMLAB Observatory Platform (DOP)** is the root. All observatories inherit shared architecture, SDKs, event model, identity, analytics, and UI shell.
 
+Products are not independent apps. They are specializations of **one platform** (same pattern as vSphere, HashiCorp, OpenShift, Dynatrace, Splunk).
+
 ### 2. Vision
 
 Engineering platforms that make complex systems **observable, understandable, automatable, and ultimately self-improving**. DOP is the Digital Observatory / observability root those platforms share.
@@ -25,7 +27,14 @@ Engineering platforms that make complex systems **observable, understandable, au
 
 Build engineering observability systems that measure complex domains in ways that are currently **unavailable, fragmented, or prohibitively expensive**.
 
-We do **not** optimize for “another dashboard” or “another monitoring suite.”
+| Not | Instead |
+|-----|---------|
+| Build dashboards | Invent **new forms of observability** |
+| Build monitoring | Answer **what should happen next** |
+
+Grafana-class tools answer **“What is happening.”** We answer **“What should happen next.”**
+
+We do **not** optimize for “another dashboard” or “another monitoring suite.” See [PLATFORM-PHILOSOPHY](../standards/PLATFORM-PHILOSOPHY.md).
 
 ### 4. Five questions (normative UX/API contract)
 
@@ -76,13 +85,15 @@ Every product strives to discover signals **nobody measures today**. Commodity m
 
 Documentation is a primary engineering output: README, Getting Started, Architecture, ADR, API, SDK, Examples, Tutorials, Research, Benchmarks, Roadmap, FAQ, Contributing, Glossary, Reference, Release Notes. These feed developer docs, SEO/GEO pages, Behind the Design stories, and the knowledge graph.
 
+Normative detail: [DOCUMENTATION-AS-PRODUCT](../standards/DOCUMENTATION-AS-PRODUCT.md), [KNOWLEDGE-MODEL](../standards/KNOWLEDGE-MODEL.md), [FLYWHEEL](../standards/FLYWHEEL.md).
+
 ## Consequences
 
-- New work is gated by [ADR-9999](./ADR-9999-innovation-principles.md).
+- New work is gated by [ADR-9999](./ADR-9999-innovation-principles.md). This North Star ensures the platform never drifts into another monitoring suite and instead continually produces novel capabilities that become original articles, benchmark reports, talks, and open-source research—all reinforcing authority and discoverability.
 - Coding agents consume platform ADRs before product ADRs; products stay thin.
 - `dasmlab_home` remains the public Engineering Knowledge Network and Activity producer; it is **not** the Observatory Platform repo.
 - `dasmlab-cdn-mgr` remains object/realm/CDN platform; engagement may dual-write later (home ADR-001) but is not DOP.
-- GitHub org layout targets `github.com/dasmlab/{platform,plugins,products,labs,research}`; interim hosting under `lmcdasm/` / local `/home/dasm/dasmlab-observatory-platform` is acceptable.
+- GitHub org layout targets `github.com/dasmlab/{platform,plugins,products,labs,research}`; interim monorepo under `dasmlab/dasmlab-observatory-platform` is acceptable.
 
 ## Related
 

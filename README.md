@@ -16,13 +16,14 @@ Engineering platforms that make complex systems **observable, understandable, au
 ## Start here
 
 0. [Plans index](./docs/plans/README.md) — E2E story + parallel DXX blueprints
-
-1. [Observatory family](./docs/OBSERVATORY-FAMILY.md) — products, differentiators, layout
-2. [Novel scores](./docs/SCORES.md) — what we measure instead of commodity metrics
-3. [Engineering Principles](./docs/standards/ENGINEERING-PRINCIPLES.md)
-4. [ADR Index](./docs/adr/README.md) · [ADR-0001 Vision](./docs/adr/ADR-0001-observatory-platform-vision.md) · [ADR-9999 Innovation](./docs/adr/ADR-9999-innovation-principles.md)
-5. [ADR-0400 DPO](./docs/adr/ADR-0400-digital-presence-observatory.md) (first live product)
-6. Live UI **Family** tab → `GET /api/v1/family`
+1. [Platform philosophy](./docs/standards/PLATFORM-PHILOSOPHY.md) — one platform; what should happen next
+2. [Observatory family](./docs/OBSERVATORY-FAMILY.md) — products, differentiators, layout
+3. [Novel scores](./docs/SCORES.md) — what we measure instead of commodity metrics
+4. [Documentation as product](./docs/standards/DOCUMENTATION-AS-PRODUCT.md) · [Knowledge model](./docs/standards/KNOWLEDGE-MODEL.md) · [Flywheel](./docs/standards/FLYWHEEL.md)
+5. [Engineering Principles](./docs/standards/ENGINEERING-PRINCIPLES.md)
+6. [ADR Index](./docs/adr/README.md) · [ADR-0001 Vision](./docs/adr/ADR-0001-observatory-platform-vision.md) · [ADR-9999 Innovation](./docs/adr/ADR-9999-innovation-principles.md)
+7. [ADR-0400 DPO](./docs/adr/ADR-0400-digital-presence-observatory.md) (first live product)
+8. Live UI **Family** tab → `GET /api/v1/family`
 
 ## Run locally
 

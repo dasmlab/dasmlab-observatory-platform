@@ -73,7 +73,8 @@ DPO especially: research outputs are themselves digital-presence assets that DPO
 
 ## Consequences
 
-- Product managers and coding agents treat this ADR as non-negotiable.
+- Product managers and coding agents treat this ADR as non-negotiable **North Star**.
+- It ensures the platform never drifts into becoming just another monitoring suite and instead continually produces novel capabilities that can be turned into original articles, benchmark reports, conference talks, and open-source research—all of which reinforce the authority and discoverability of the DASMLAB ecosystem.
 - Labs may violate the gate temporarily but must declare the experiment hypothesis and sunset.
 - CE/EE packaging may include commodity connectors as *plumbing*, but marketing and roadmap prioritize gate-passing capabilities.
 

@@ -1,5 +1,8 @@
 # Observatory family (DOP)
 
+See also: [Platform philosophy](./standards/PLATFORM-PHILOSOPHY.md) · [Flywheel](./standards/FLYWHEEL.md) · [Knowledge model](./standards/KNOWLEDGE-MODEL.md).
+
+
 Engineering platforms that make complex systems **observable, understandable, automatable, and ultimately self-improving**.
 
 One Digital Observatory / observability platform. Same architecture. Different plugins. Thin products.

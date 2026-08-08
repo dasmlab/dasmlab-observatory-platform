@@ -68,10 +68,29 @@ function familyView(fam) {
       text: fam?.differentiator || "Discover things nobody measures today.",
     }),
     el("p", {
+      class: "tag",
+      text: fam?.positioning || "We answer what should happen next.",
+    }),
+    el("h2", { class: "section-title", text: "Mission" }),
+    el(
+      "div",
+      { class: "comps" },
+      [
+        el("div", { class: "comp" }, [
+          el("div", { class: "k", text: "Not" }),
+          el("div", { class: "meta", text: (fam?.mission_not || []).join(" · ") }),
+        ]),
+        el("div", { class: "comp" }, [
+          el("div", { class: "k", text: "Instead" }),
+          el("div", { class: "meta", text: (fam?.mission_instead || []).join(" · ") }),
+        ]),
+      ]
+    ),
+    el("p", {
       class: "meta",
       text: "Five questions: " + (fam?.five_questions || []).join(" → "),
     }),
-    el("h2", { class: "section-title", text: "Innovation gate" }),
+    el("h2", { class: "section-title", text: "Innovation gate (ADR-9999)" }),
     el(
       "div",
       { class: "comps" },
@@ -119,6 +138,8 @@ function familyView(fam) {
     ),
     el("h2", { class: "section-title", text: "Shared SDKs" }),
     el("p", { class: "meta", text: (fam?.shared_sdks || []).join(" · ") }),
+    el("h2", { class: "section-title", text: "Standards" }),
+    el("p", { class: "meta", text: (fam?.standards || []).join(" · ") }),
     el("h2", { class: "section-title", text: "Research backlog" }),
     el("p", { class: "meta", text: (fam?.research_backlog || []).join(" · ") }),
     el("h2", { class: "section-title", text: "Maturity" }),

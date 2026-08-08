@@ -31,6 +31,9 @@ type Catalog struct {
 	Platform         string    `json:"platform"`
 	Tagline          string    `json:"tagline"`
 	Differentiator   string    `json:"differentiator"`
+	Positioning      string    `json:"positioning"`
+	MissionNot       []string  `json:"mission_not"`
+	MissionInstead   []string  `json:"mission_instead"`
 	InnovationGate   []string  `json:"innovation_gate"`
 	FiveQuestions    []string  `json:"five_questions"`
 	ArchitecturePipe []string  `json:"architecture_pipeline"`
@@ -39,6 +42,7 @@ type Catalog struct {
 	PlatformLayers   []Layer   `json:"platform_layers"`
 	SharedSDKs       []string  `json:"shared_sdks"`
 	ResearchBacklog  []string  `json:"research_backlog"`
+	Standards        []string  `json:"standards"`
 	ActiveProduct    string    `json:"active_product"`
 	E2EStory         string    `json:"e2e_story"`
 }
@@ -48,7 +52,18 @@ func Default() Catalog {
 		Platform:       "dop",
 		Tagline:        "Engineering platforms that make complex systems observable, understandable, automatable, and ultimately self-improving.",
 		Differentiator: "Every product discovers things nobody measures today — not another commodity dashboard.",
+		Positioning:    "Grafana answers “What is happening.” We answer “What should happen next.”",
+		MissionNot:     []string{"Build dashboards", "Build monitoring", "Another SEO or APM tool"},
+		MissionInstead: []string{"Invent new forms of observability", "Answer what should happen next", "Engineering observability for the domain"},
 		E2EStory:       "/docs/plans/E2E-PLATFORM-STORY.md",
+		Standards: []string{
+			"docs/standards/PLATFORM-PHILOSOPHY.md",
+			"docs/standards/ENGINEERING-PRINCIPLES.md",
+			"docs/standards/DOCUMENTATION-AS-PRODUCT.md",
+			"docs/standards/KNOWLEDGE-MODEL.md",
+			"docs/standards/FLYWHEEL.md",
+			"docs/adr/ADR-9999-innovation-principles.md",
+		},
 		FiveQuestions: []string{
 			"What exists?", "What changed?", "Why did it change?", "What will happen?", "What should I do?",
 		},
